@@ -39,13 +39,14 @@ export class MeekMap<K extends WeakKey, V> {
 		this.#fr = new FinalizationRegistry(this.#set.delete.bind(this.#set));
 		this.#values = new WeakMap();
 		for (const [key, value] of iterable ?? []) {
-			if (!this.#map.has(key)) {
-				const ref = new WeakRef(key);
+			let ref = this.#map.get(key);
+			if (!ref) {
+				ref = new WeakRef(key);
 				this.#fr.register(key, ref, key);
 				this.#map.set(key, ref);
 				this.#set.add(ref);
-				this.#values.set(key, value);
 			}
+			this.#values.set(key, value);
 		}
 	}
 

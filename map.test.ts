@@ -31,6 +31,16 @@ Deno.test('MeekMap: constructor', () => {
 		const map = new MeekMap(src);
 		assertStrictEquals(map.size, src.length);
 	}
+	{
+		const o = { k: 'a' };
+		const src: readonly [{ k: string }, { v: number }][] = [
+			[o, { v: 1 }] as const,
+			[{ k: 'b' }, { v: 2 }] as const,
+			[o, { v: 3 }] as const,
+		];
+		const map = new MeekMap(src);
+		assertStrictEquals(map.get(o), src[2][1]);
+	}
 });
 
 Deno.test('MeekMap: get', () => {
