@@ -25,6 +25,12 @@ Deno.test('MeekSet: constructor', () => {
 		const set = new MeekSet(src);
 		assertStrictEquals(set.size, src.size);
 	}
+	{
+		const reuse = {};
+		const src = [reuse, [2], [2], reuse];
+		const set = new MeekSet(src);
+		assertStrictEquals(set.size, src.length - 1);
+	}
 });
 
 Deno.test('MeekSet: add', () => {
