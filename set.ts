@@ -109,8 +109,7 @@ export class MeekSet<T extends WeakKey> {
 	 * @returns Whether the value is in this set.
 	 */
 	public has(value: T): boolean {
-		const ref = this.#map.get(value);
-		return ref ? !!ref.deref() : false;
+		return !!this.#map.get(value)?.deref();
 	}
 
 	/**
