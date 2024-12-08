@@ -30,7 +30,7 @@ Deno.test('MeekSet: constructor', () => {
 Deno.test('MeekSet: add', () => {
 	const values = new Array(100).fill(0).map((_, i) => ({ i }));
 	const set = new MeekSet();
-	for (let i = 0; i < 100; i++) {
+	for (let i = 0; i < values.length; i++) {
 		assertEquals(set.add(values[i]), set);
 		assertEquals(set.size, i + 1);
 		assertEquals(set.add(values[i]), set);
