@@ -1,4 +1,4 @@
-import { assertEquals, assertLess } from '@std/assert';
+import { assert, assertEquals, assertLess } from '@std/assert';
 
 import { MeekSet } from './set.ts';
 
@@ -36,6 +36,7 @@ Deno.test('MeekSet: add', () => {
 		assertEquals(set.add(values[i]), set);
 		assertEquals(set.size, i + 1);
 	}
+	assert(values);
 });
 
 Deno.test('MeekSet: clear', () => {
@@ -46,6 +47,7 @@ Deno.test('MeekSet: clear', () => {
 	assertEquals(set.size, 0);
 	set.clear();
 	assertEquals(set.size, 0);
+	assert(values);
 });
 
 Deno.test('MeekSet: delete', () => {
@@ -57,6 +59,7 @@ Deno.test('MeekSet: delete', () => {
 		assertEquals(set.delete(values[i]), false);
 		assertEquals(set.size, i);
 	}
+	assert(values);
 });
 
 Deno.test('MeekSet: has', () => {
@@ -75,6 +78,7 @@ Deno.test('MeekSet: has', () => {
 		assertEquals(set.add(values[i]), set);
 		assertEquals(set.has(values[i]), true);
 	}
+	assert(values);
 });
 
 Deno.test('MeekSet: forEach', () => {
@@ -84,15 +88,16 @@ Deno.test('MeekSet: forEach', () => {
 	set.forEach((value) => {
 		assertEquals(value, values[i++]);
 	});
+	assert(values);
 });
 
 Deno.test('MeekSet: GC', async () => {
 	let total = 0;
-	const keep = [];
+	const values = [];
 	const set = new MeekSet();
 	for (let i = 0; i < 10; i++) {
 		const o = { i: total++, data: new Uint8Array(1000) };
-		keep.push(o);
+		values.push(o);
 		set.add(o);
 	}
 	while (set.size >= (total / 2)) {
@@ -102,8 +107,9 @@ Deno.test('MeekSet: GC', async () => {
 		// deno-lint-ignore no-await-in-loop
 		await new Promise((r) => setTimeout(r, 0));
 	}
-	for (const o of keep) {
+	for (const o of values) {
 		assertEquals(set.has(o), true);
 	}
 	assertLess(set.size, total);
+	assert(values);
 });
