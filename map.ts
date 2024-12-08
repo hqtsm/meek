@@ -122,8 +122,7 @@ export class MeekMap<K extends WeakKey, V> {
 	 * @returns Whether the key is in this map.
 	 */
 	public has(key: K): boolean {
-		const ref = this.#map.get(key);
-		return ref ? this.#set.has(ref) && !!ref.deref() : false;
+		return !!this.#map.get(key)?.deref();
 	}
 
 	/**
