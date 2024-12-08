@@ -69,6 +69,12 @@ Deno.test('MeekSet: has', () => {
 		assertEquals(set.add(values[i]), set);
 		assertEquals(set.has(values[i]), true);
 	}
+	set.clear();
+	for (let i = values.length; i--;) {
+		assertEquals(set.has(values[i]), false);
+		assertEquals(set.add(values[i]), set);
+		assertEquals(set.has(values[i]), true);
+	}
 });
 
 Deno.test('MeekSet: forEach', () => {
