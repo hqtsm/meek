@@ -146,6 +146,7 @@ export class MeekMap<K extends WeakKey, V> {
 
 	/**
 	 * The number of keys in this map.
+	 * Can be higher than the number of active keys.
 	 */
 	public get size(): number {
 		return this.#set.size;

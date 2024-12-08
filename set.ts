@@ -114,6 +114,7 @@ export class MeekSet<T extends WeakKey> {
 
 	/**
 	 * The number of values in this set.
+	 * Can be higher than the number of active values.
 	 */
 	public get size(): number {
 		return this.#set.size;
