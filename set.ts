@@ -16,7 +16,7 @@ export class MeekSet<T extends WeakKey> {
 	/**
 	 * Map of values to weak references.
 	 */
-	readonly #map: WeakMap<T, WeakRef<T>>;
+	#map: WeakMap<T, WeakRef<T>>;
 
 	/**
 	 * Set of weak references.
@@ -63,7 +63,9 @@ export class MeekSet<T extends WeakKey> {
 	 * Clear this set.
 	 */
 	public clear(): void {
+		const map = new WeakMap();
 		this.#set.clear();
+		this.#map = map;
 	}
 
 	/**
