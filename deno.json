@@ -26,14 +26,14 @@
 	"lint": {
 		"rules": {
 			"exclude": [
-				"no-boolean-literal-for-arguments"
+				"no-boolean-literal-for-arguments",
+				"no-explicit-any"
 			],
 			"include": [
 				"camelcase",
 				"default-param-last",
 				"eqeqeq",
 				"explicit-function-return-type",
-				"explicit-module-boundary-types",
 				"guard-for-in",
 				"no-await-in-loop",
 				"no-boolean-literal-for-arguments",
