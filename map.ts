@@ -91,9 +91,13 @@ export class MeekMap<K extends WeakKey, V> {
 		for (const ref of this.#set) {
 			const key = ref.deref();
 			if (key) {
-				const value = this.#values.get(key);
 				if (this.#values.has(key)) {
-					callbackfn.call(thisArg, value as V, key, this);
+					callbackfn.call(
+						thisArg,
+						this.#values.get(key) as V,
+						key,
+						this,
+					);
 				}
 			}
 		}
