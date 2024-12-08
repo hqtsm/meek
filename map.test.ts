@@ -1,4 +1,4 @@
-import { assert, assertStrictEquals } from '@std/assert';
+import { assert, assertLess, assertStrictEquals } from '@std/assert';
 
 import { MeekMap } from './map.ts';
 
@@ -122,5 +122,29 @@ Deno.test('MeekMap: forEach', () => {
 		assertStrictEquals(m, map);
 		i++;
 	});
+	assert(pairs);
+});
+
+Deno.test('MeekMap: GC', async () => {
+	let total = 0;
+	const pairs = new Map();
+	const map = new MeekMap();
+	for (let i = 0; i < 10; i++) {
+		const o = { i: total++, data: new Uint8Array(1000) };
+		pairs.set(o, o.i + 1);
+		map.set(o, o.i + 1);
+	}
+	while (map.size >= (total / 2)) {
+		for (let i = 0; i < 100; i++) {
+			map.set({ i: total++, data: new Uint8Array(10000) }, -1);
+		}
+		// deno-lint-ignore no-await-in-loop
+		await new Promise((r) => setTimeout(r, 0));
+	}
+	for (const [k, v] of pairs) {
+		assertStrictEquals(map.has(k), true);
+		assertStrictEquals(map.get(k), v);
+	}
+	assertLess(map.size, total);
 	assert(pairs);
 });
