@@ -1,4 +1,4 @@
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertLess } from '@std/assert';
 
 import { MeekSet } from './set.ts';
 
@@ -78,4 +78,26 @@ Deno.test('MeekSet: forEach', () => {
 	set.forEach((value) => {
 		assertEquals(value, values[i++]);
 	});
+});
+
+Deno.test('MeekSet: GC', async () => {
+	let total = 0;
+	const keep = [];
+	const set = new MeekSet();
+	for (let i = 0; i < 10; i++) {
+		const o = { i: total++, data: new Uint8Array(1000) };
+		keep.push(o);
+		set.add(o);
+	}
+	while (set.size >= (total - 10)) {
+		for (let i = 0; i < 100; i++) {
+			set.add({ i: total++, data: new Uint8Array(10000) });
+		}
+		// deno-lint-ignore no-await-in-loop
+		await new Promise((r) => setTimeout(r, 0));
+	}
+	for (const o of keep) {
+		assertEquals(set.has(o), true);
+	}
+	assertLess(set.size, total);
 });
