@@ -1,4 +1,9 @@
-import { assert, assertEquals, assertLess } from '@std/assert';
+import {
+	assert,
+	assertEquals,
+	assertLess,
+	assertStrictEquals,
+} from '@std/assert';
 
 import { MeekSet } from './set.ts';
 
@@ -85,8 +90,11 @@ Deno.test('MeekSet: forEach', () => {
 	const values = new Array(100).fill(0).map((_, i) => ({ i }));
 	const set = new MeekSet(values);
 	let i = 0;
-	set.forEach((value) => {
-		assertEquals(value, values[i++]);
+	set.forEach((value, key, s) => {
+		assertEquals(value, values[i]);
+		assertEquals(key, values[i]);
+		assertStrictEquals(s, set);
+		i++;
 	});
 	assert(values);
 });

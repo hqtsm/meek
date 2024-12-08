@@ -1,4 +1,4 @@
-import { assert, assertEquals } from '@std/assert';
+import { assert, assertEquals, assertStrictEquals } from '@std/assert';
 
 import { MeekMap } from './map.ts';
 
@@ -115,9 +115,10 @@ Deno.test('MeekMap: forEach', () => {
 		.map((_, i) => [{ i }, i]);
 	const map = new MeekMap(pairs);
 	let i = 0;
-	map.forEach((value, key) => {
+	map.forEach((value, key, m) => {
 		assertEquals(value, pairs[i][1]);
 		assertEquals(key, pairs[i][0]);
+		assertStrictEquals(m, map);
 		i++;
 	});
 	assert(pairs);
