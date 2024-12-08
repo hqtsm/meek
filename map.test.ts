@@ -140,9 +140,10 @@ Deno.test('MeekMap: GC', async () => {
 	const pairs = new Map();
 	const map = new MeekMap();
 	for (let i = 0; i < 10; i++) {
-		const o = { i: total++, data: new Uint8Array(1000) };
-		pairs.set(o, o.i + 1);
-		map.set(o, o.i + 1);
+		const o = { i, data: new Uint8Array(1000) };
+		pairs.set(o, i + 1);
+		map.set(o, i + 1);
+		total++;
 	}
 	while (map.size >= (total / 2)) {
 		for (let i = 0; i < 100; i++) {

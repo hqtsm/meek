@@ -105,9 +105,10 @@ Deno.test('MeekSet: GC', async () => {
 	const values = new Set<{ i: number; data: Uint8Array }>();
 	const set = new MeekSet<{ i: number; data: Uint8Array }>();
 	for (let i = 0; i < 10; i++) {
-		const o = { i: total++, data: new Uint8Array(1000) };
+		const o = { i, data: new Uint8Array(1000) };
 		values.add(o);
 		set.add(o);
+		total++;
 	}
 	while (set.size >= (total / 2)) {
 		for (let i = 0; i < 100; i++) {
