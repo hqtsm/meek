@@ -1,34 +1,29 @@
-import {
-	assert,
-	assertEquals,
-	assertLess,
-	assertStrictEquals,
-} from '@std/assert';
+import { assert, assertLess, assertStrictEquals } from '@std/assert';
 
 import { MeekSet } from './set.ts';
 
 Deno.test('MeekSet: constructor', () => {
 	{
 		const set = new MeekSet();
-		assertEquals(set.size, 0);
+		assertStrictEquals(set.size, 0);
 	}
 	{
 		const set = new MeekSet(null);
-		assertEquals(set.size, 0);
+		assertStrictEquals(set.size, 0);
 	}
 	{
 		const set = new MeekSet([]);
-		assertEquals(set.size, 0);
+		assertStrictEquals(set.size, 0);
 	}
 	{
 		const src = [{ a: 1 }];
 		const set = new MeekSet(src);
-		assertEquals(set.size, src.length);
+		assertStrictEquals(set.size, src.length);
 	}
 	{
 		const src = new Set([[1], [2], [3]]);
 		const set = new MeekSet(src);
-		assertEquals(set.size, src.size);
+		assertStrictEquals(set.size, src.size);
 	}
 });
 
@@ -36,10 +31,10 @@ Deno.test('MeekSet: add', () => {
 	const values = new Array(100).fill(0).map((_, i) => ({ i }));
 	const set = new MeekSet();
 	for (let i = 0; i < values.length; i++) {
-		assertEquals(set.add(values[i]), set);
-		assertEquals(set.size, i + 1);
-		assertEquals(set.add(values[i]), set);
-		assertEquals(set.size, i + 1);
+		assertStrictEquals(set.add(values[i]), set);
+		assertStrictEquals(set.size, i + 1);
+		assertStrictEquals(set.add(values[i]), set);
+		assertStrictEquals(set.size, i + 1);
 	}
 	assert(values);
 });
@@ -47,11 +42,11 @@ Deno.test('MeekSet: add', () => {
 Deno.test('MeekSet: clear', () => {
 	const values = new Array(100).fill(0).map((_, i) => ({ i }));
 	const set = new MeekSet(values);
-	assertEquals(set.size, values.length);
+	assertStrictEquals(set.size, values.length);
 	set.clear();
-	assertEquals(set.size, 0);
+	assertStrictEquals(set.size, 0);
 	set.clear();
-	assertEquals(set.size, 0);
+	assertStrictEquals(set.size, 0);
 	assert(values);
 });
 
@@ -59,10 +54,10 @@ Deno.test('MeekSet: delete', () => {
 	const values = new Array(100).fill(0).map((_, i) => ({ i }));
 	const set = new MeekSet(values);
 	for (let i = values.length; i--;) {
-		assertEquals(set.delete(values[i]), true);
-		assertEquals(set.size, i);
-		assertEquals(set.delete(values[i]), false);
-		assertEquals(set.size, i);
+		assertStrictEquals(set.delete(values[i]), true);
+		assertStrictEquals(set.size, i);
+		assertStrictEquals(set.delete(values[i]), false);
+		assertStrictEquals(set.size, i);
 	}
 	assert(values);
 });
@@ -71,17 +66,17 @@ Deno.test('MeekSet: has', () => {
 	const values = new Array(100).fill(0).map((_, i) => ({ i }));
 	const set = new MeekSet(values);
 	for (let i = values.length; i--;) {
-		assertEquals(set.has(values[i]), true);
-		assertEquals(set.delete(values[i]), true);
-		assertEquals(set.has(values[i]), false);
-		assertEquals(set.add(values[i]), set);
-		assertEquals(set.has(values[i]), true);
+		assertStrictEquals(set.has(values[i]), true);
+		assertStrictEquals(set.delete(values[i]), true);
+		assertStrictEquals(set.has(values[i]), false);
+		assertStrictEquals(set.add(values[i]), set);
+		assertStrictEquals(set.has(values[i]), true);
 	}
 	set.clear();
 	for (let i = values.length; i--;) {
-		assertEquals(set.has(values[i]), false);
-		assertEquals(set.add(values[i]), set);
-		assertEquals(set.has(values[i]), true);
+		assertStrictEquals(set.has(values[i]), false);
+		assertStrictEquals(set.add(values[i]), set);
+		assertStrictEquals(set.has(values[i]), true);
 	}
 	assert(values);
 });
@@ -91,8 +86,8 @@ Deno.test('MeekSet: forEach', () => {
 	const set = new MeekSet(values);
 	let i = 0;
 	set.forEach((value, key, s) => {
-		assertEquals(value, values[i]);
-		assertEquals(key, values[i]);
+		assertStrictEquals(value, values[i]);
+		assertStrictEquals(key, values[i]);
 		assertStrictEquals(s, set);
 		i++;
 	});
@@ -116,7 +111,7 @@ Deno.test('MeekSet: GC', async () => {
 		await new Promise((r) => setTimeout(r, 0));
 	}
 	for (const o of values) {
-		assertEquals(set.has(o), true);
+		assertStrictEquals(set.has(o), true);
 	}
 	assertLess(set.size, total);
 	assert(values);
