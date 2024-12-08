@@ -96,11 +96,11 @@ Deno.test('MeekSet: forEach', () => {
 
 Deno.test('MeekSet: GC', async () => {
 	let total = 0;
-	const values = [];
-	const set = new MeekSet();
+	const values = new Set<{ i: number; data: Uint8Array }>();
+	const set = new MeekSet<{ i: number; data: Uint8Array }>();
 	for (let i = 0; i < 10; i++) {
 		const o = { i: total++, data: new Uint8Array(1000) };
-		values.push(o);
+		values.add(o);
 		set.add(o);
 	}
 	while (set.size >= (total / 2)) {
@@ -114,5 +114,8 @@ Deno.test('MeekSet: GC', async () => {
 		assertStrictEquals(set.has(o), true);
 	}
 	assertLess(set.size, total);
+	set.forEach((value) => {
+		assertStrictEquals(values.has(value), value.i < 10);
+	});
 	assert(values);
 });

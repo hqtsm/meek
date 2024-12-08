@@ -146,5 +146,8 @@ Deno.test('MeekMap: GC', async () => {
 		assertStrictEquals(map.get(k), v);
 	}
 	assertLess(map.size, total);
+	map.forEach((value, key) => {
+		assertStrictEquals(value, pairs.has(key) ? pairs.get(key) : -1);
+	});
 	assert(pairs);
 });
