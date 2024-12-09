@@ -16,12 +16,12 @@ export class MeekSet<T extends WeakKey> {
 	/**
 	 * Map of values to weak references.
 	 */
-	#map: WeakMap<T, WeakRef<T>>;
+	#vwv: WeakMap<T, WeakRef<T>>;
 
 	/**
-	 * Set of weak references.
+	 * Set of weak references to values.
 	 */
-	readonly #set: Set<WeakRef<T>>;
+	readonly #wv: Set<WeakRef<T>>;
 
 	/**
 	 * Create a new MeekSet.
@@ -29,15 +29,15 @@ export class MeekSet<T extends WeakKey> {
 	 * @param iterable Initial values.
 	 */
 	constructor(iterable?: Iterable<T> | null) {
-		this.#map = new WeakMap();
-		this.#set = new Set();
-		this.#fr = new FinalizationRegistry(this.#set.delete.bind(this.#set));
+		this.#vwv = new WeakMap();
+		this.#wv = new Set();
+		this.#fr = new FinalizationRegistry(this.#wv.delete.bind(this.#wv));
 		for (const value of iterable ?? []) {
-			if (!this.#map.has(value)) {
+			if (!this.#vwv.has(value)) {
 				const ref = new WeakRef(value);
 				this.#fr.register(value, ref, value);
-				this.#map.set(value, ref);
-				this.#set.add(ref);
+				this.#vwv.set(value, ref);
+				this.#wv.add(ref);
 			}
 		}
 	}
@@ -48,7 +48,7 @@ export class MeekSet<T extends WeakKey> {
 	 * @returns Set iterator.
 	 */
 	public *[Symbol.iterator](): IterableIterator<T> {
-		for (const ref of this.#set) {
+		for (const ref of this.#wv) {
 			const value = ref.deref();
 			if (value) {
 				yield value;
@@ -63,12 +63,12 @@ export class MeekSet<T extends WeakKey> {
 	 * @returns This set.
 	 */
 	public add(value: T): this {
-		let ref = this.#map.get(value);
+		let ref = this.#vwv.get(value);
 		if (!ref) {
 			ref = new WeakRef(value);
 			this.#fr.register(value, ref, value);
-			this.#map.set(value, ref);
-			this.#set.add(ref);
+			this.#vwv.set(value, ref);
+			this.#wv.add(ref);
 		}
 		return this;
 	}
@@ -78,8 +78,8 @@ export class MeekSet<T extends WeakKey> {
 	 */
 	public clear(): void {
 		const map = new WeakMap();
-		this.#set.clear();
-		this.#map = map;
+		this.#wv.clear();
+		this.#vwv = map;
 	}
 
 	/**
@@ -89,11 +89,11 @@ export class MeekSet<T extends WeakKey> {
 	 * @returns Whether the value was deleted.
 	 */
 	public delete(value: T): boolean {
-		const ref = this.#map.get(value);
+		const ref = this.#vwv.get(value);
 		if (ref) {
 			this.#fr.unregister(value);
-			this.#map.delete(value);
-			return this.#set.delete(ref);
+			this.#vwv.delete(value);
+			return this.#wv.delete(ref);
 		}
 		return false;
 	}
@@ -104,7 +104,7 @@ export class MeekSet<T extends WeakKey> {
 	 * @returns Key-value iterator.
 	 */
 	public *entries(): IterableIterator<[T, T]> {
-		for (const ref of this.#set) {
+		for (const ref of this.#wv) {
 			const value = ref.deref();
 			if (value) {
 				yield [value, value];
@@ -122,7 +122,7 @@ export class MeekSet<T extends WeakKey> {
 		callbackfn: (value: T, value2: T, set: MeekSet<T>) => void,
 		thisArg?: any,
 	): void {
-		for (const ref of this.#set) {
+		for (const ref of this.#wv) {
 			const value = ref.deref();
 			if (value) {
 				callbackfn.call(thisArg, value, value, this);
@@ -137,7 +137,7 @@ export class MeekSet<T extends WeakKey> {
 	 * @returns Whether the value is in this set.
 	 */
 	public has(value: T): boolean {
-		return !!this.#map.get(value)?.deref();
+		return !!this.#vwv.get(value)?.deref();
 	}
 
 	/**
@@ -146,7 +146,7 @@ export class MeekSet<T extends WeakKey> {
 	 * @returns Key iterator.
 	 */
 	public *keys(): IterableIterator<T> {
-		for (const ref of this.#set) {
+		for (const ref of this.#wv) {
 			const value = ref.deref();
 			if (value) {
 				yield value;
@@ -159,7 +159,7 @@ export class MeekSet<T extends WeakKey> {
 	 * Can be higher than the number of active values.
 	 */
 	public get size(): number {
-		return this.#set.size;
+		return this.#wv.size;
 	}
 
 	/**
@@ -168,7 +168,7 @@ export class MeekSet<T extends WeakKey> {
 	 * @returns Value iterator.
 	 */
 	public *values(): IterableIterator<T> {
-		for (const ref of this.#set) {
+		for (const ref of this.#wv) {
 			const value = ref.deref();
 			if (value) {
 				yield value;

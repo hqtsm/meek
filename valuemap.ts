@@ -14,7 +14,7 @@ export class MeekValueMap<K, V extends WeakKey> {
 	readonly #fr: FinalizationRegistry<K>;
 
 	/**
-	 * Map of keys to weak references.
+	 * Map of keys to weak references to values.
 	 */
 	readonly #map: Map<K, WeakRef<V>>;
 
