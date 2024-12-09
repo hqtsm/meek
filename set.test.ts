@@ -100,6 +100,51 @@ Deno.test('MeekSet: forEach', () => {
 	assert(values);
 });
 
+Deno.test('MeekSet: Symbol.iterator', () => {
+	const values = new Array(100).fill(0).map((_, i) => ({ i }));
+	const set = new MeekSet(values);
+	let i = 0;
+	for (const value of set) {
+		assertStrictEquals(value, values[i]);
+		i++;
+	}
+	assert(values);
+});
+
+Deno.test('MeekSet: entries', () => {
+	const values = new Array(100).fill(0).map((_, i) => ({ i }));
+	const set = new MeekSet(values);
+	let i = 0;
+	for (const [k, v] of set.entries()) {
+		assertStrictEquals(k, v);
+		assertStrictEquals(v, values[i]);
+		i++;
+	}
+	assert(values);
+});
+
+Deno.test('MeekSet: keys', () => {
+	const values = new Array(100).fill(0).map((_, i) => ({ i }));
+	const set = new MeekSet(values);
+	let i = 0;
+	for (const value of set.keys()) {
+		assertStrictEquals(value, values[i]);
+		i++;
+	}
+	assert(values);
+});
+
+Deno.test('MeekSet: values', () => {
+	const values = new Array(100).fill(0).map((_, i) => ({ i }));
+	const set = new MeekSet(values);
+	let i = 0;
+	for (const value of set.values()) {
+		assertStrictEquals(value, values[i]);
+		i++;
+	}
+	assert(values);
+});
+
 Deno.test('MeekSet: GC', async () => {
 	let total = 0;
 	const values = new Set<{ i: number; data: Uint8Array }>();

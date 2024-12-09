@@ -43,6 +43,20 @@ export class MeekSet<T extends WeakKey> {
 	}
 
 	/**
+	 * Iterator for values in this set.
+	 *
+	 * @returns Set iterator.
+	 */
+	public *[Symbol.iterator](): SetIterator<T> {
+		for (const ref of this.#set) {
+			const value = ref.deref();
+			if (value) {
+				yield value;
+			}
+		}
+	}
+
+	/**
 	 * Add a value to this set.
 	 *
 	 * @param value Value to add.
@@ -85,6 +99,20 @@ export class MeekSet<T extends WeakKey> {
 	}
 
 	/**
+	 * Iterator for values in this set.
+	 *
+	 * @returns Set iterator.
+	 */
+	public *entries(): SetIterator<[T, T]> {
+		for (const ref of this.#set) {
+			const value = ref.deref();
+			if (value) {
+				yield [value, value];
+			}
+		}
+	}
+
+	/**
 	 * Call a function for each value in this set.
 	 *
 	 * @param callbackfn Callback function.
@@ -113,10 +141,38 @@ export class MeekSet<T extends WeakKey> {
 	}
 
 	/**
+	 * Iterator for values in this set.
+	 *
+	 * @returns Set iterator.
+	 */
+	public *keys(): SetIterator<T> {
+		for (const ref of this.#set) {
+			const value = ref.deref();
+			if (value) {
+				yield value;
+			}
+		}
+	}
+
+	/**
 	 * The number of values in this set.
 	 * Can be higher than the number of active values.
 	 */
 	public get size(): number {
 		return this.#set.size;
+	}
+
+	/**
+	 * Iterator for values in this set.
+	 *
+	 * @returns Set iterator.
+	 */
+	public *values(): SetIterator<T> {
+		for (const ref of this.#set) {
+			const value = ref.deref();
+			if (value) {
+				yield value;
+			}
+		}
 	}
 }
