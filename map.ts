@@ -58,7 +58,7 @@ export class MeekMap<K extends WeakKey, V> {
 	public *[Symbol.iterator](): IterableIterator<[K, V]> {
 		for (const ref of this.#set) {
 			const key = ref.deref();
-			if (key && this.#values.has(key)) {
+			if (key) {
 				yield [key, this.#values.get(key) as V];
 			}
 		}
@@ -100,7 +100,7 @@ export class MeekMap<K extends WeakKey, V> {
 	public *entries(): IterableIterator<[K, V]> {
 		for (const ref of this.#set) {
 			const key = ref.deref();
-			if (key && this.#values.has(key)) {
+			if (key) {
 				yield [key, this.#values.get(key) as V];
 			}
 		}
@@ -119,14 +119,12 @@ export class MeekMap<K extends WeakKey, V> {
 		for (const ref of this.#set) {
 			const key = ref.deref();
 			if (key) {
-				if (this.#values.has(key)) {
-					callbackfn.call(
-						thisArg,
-						this.#values.get(key) as V,
-						key,
-						this,
-					);
-				}
+				callbackfn.call(
+					thisArg,
+					this.#values.get(key) as V,
+					key,
+					this,
+				);
 			}
 		}
 	}
@@ -165,7 +163,7 @@ export class MeekMap<K extends WeakKey, V> {
 	public *keys(): IterableIterator<K> {
 		for (const ref of this.#set) {
 			const key = ref.deref();
-			if (key && this.#values.has(key)) {
+			if (key) {
 				yield key;
 			}
 		}
@@ -206,7 +204,7 @@ export class MeekMap<K extends WeakKey, V> {
 	public *values(): IterableIterator<V> {
 		for (const ref of this.#set) {
 			const key = ref.deref();
-			if (key && this.#values.has(key)) {
+			if (key) {
 				yield this.#values.get(key) as V;
 			}
 		}
