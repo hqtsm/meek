@@ -7,7 +7,7 @@
 /**
  * Like WeakMap.
  */
-export class MeekMap<K extends WeakKey, V> {
+export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	/**
 	 * Finalization registry.
 	 */

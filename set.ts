@@ -7,7 +7,7 @@
 /**
  * Like WeakSet.
  */
-export class MeekSet<T extends WeakKey> {
+export class MeekSet<T extends WeakKey = WeakKey> {
 	/**
 	 * Finalization registry.
 	 */
