@@ -226,6 +226,6 @@ Deno.test('MeekValueMap: GC', async () => {
 
 Deno.test('MeekValueMap: implements map', () => {
 	// Really just type checked.
-	const map: Map<number, WeakKey> = new MeekValueMap([[123, { a: 1 }]]);
+	const map: Map<number, [number]> = new MeekValueMap([[123, [1]]]);
 	assert(map);
 });
