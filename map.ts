@@ -65,6 +65,11 @@ export class MeekMap<K extends WeakKey, V> {
 	}
 
 	/**
+	 * Type string.
+	 */
+	public readonly [Symbol.toStringTag] = 'MeekMap';
+
+	/**
 	 * Clear this map.
 	 */
 	public clear(): void {
