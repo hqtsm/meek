@@ -176,3 +176,11 @@ Deno.test('MeekSet: GC', async () => {
 	});
 	assert(values);
 });
+
+/*
+Deno.test('MeekSet: implements set', () => {
+	// Really just type checked.
+	const set: Set<[number]> = new MeekSet([[1], [2], [3]]);
+	assert(set);
+});
+*/
