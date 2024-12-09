@@ -217,3 +217,9 @@ Deno.test('MeekMap: GC', async () => {
 	});
 	assert(pairs);
 });
+
+Deno.test('MeekMap: implements map', () => {
+	// Really just type checked.
+	const map: Map<WeakKey, number> = new MeekMap([[{ a: 1 }, 123]]);
+	assert(map);
+});
