@@ -26,7 +26,7 @@ export class MeekMap<K extends WeakKey, V> {
 	/**
 	 * Map of keys to values.
 	 */
-	#vv: WeakMap<K, V>;
+	#kv: WeakMap<K, V>;
 
 	/**
 	 * Create a new MeekMap.
@@ -37,7 +37,7 @@ export class MeekMap<K extends WeakKey, V> {
 		this.#kwk = new WeakMap();
 		this.#wk = new Set();
 		this.#fr = new FinalizationRegistry(this.#wk.delete.bind(this.#wk));
-		this.#vv = new WeakMap();
+		this.#kv = new WeakMap();
 		for (const [key, value] of iterable ?? []) {
 			let ref = this.#kwk.get(key);
 			if (!ref) {
@@ -46,7 +46,7 @@ export class MeekMap<K extends WeakKey, V> {
 				this.#kwk.set(key, ref);
 				this.#wk.add(ref);
 			}
-			this.#vv.set(key, value);
+			this.#kv.set(key, value);
 		}
 	}
 
@@ -59,7 +59,7 @@ export class MeekMap<K extends WeakKey, V> {
 		for (const ref of this.#wk) {
 			const key = ref.deref();
 			if (key) {
-				yield [key, this.#vv.get(key) as V];
+				yield [key, this.#kv.get(key) as V];
 			}
 		}
 	}
@@ -72,7 +72,7 @@ export class MeekMap<K extends WeakKey, V> {
 		const values = new WeakMap();
 		this.#wk.clear();
 		this.#kwk = map;
-		this.#vv = values;
+		this.#kv = values;
 	}
 
 	/**
@@ -86,7 +86,7 @@ export class MeekMap<K extends WeakKey, V> {
 		if (ref) {
 			this.#fr.unregister(key);
 			this.#kwk.delete(key);
-			this.#vv.delete(key);
+			this.#kv.delete(key);
 			return this.#wk.delete(ref);
 		}
 		return false;
@@ -101,7 +101,7 @@ export class MeekMap<K extends WeakKey, V> {
 		for (const ref of this.#wk) {
 			const key = ref.deref();
 			if (key) {
-				yield [key, this.#vv.get(key) as V];
+				yield [key, this.#kv.get(key) as V];
 			}
 		}
 	}
@@ -121,7 +121,7 @@ export class MeekMap<K extends WeakKey, V> {
 			if (key) {
 				callbackfn.call(
 					thisArg,
-					this.#vv.get(key) as V,
+					this.#kv.get(key) as V,
 					key,
 					this,
 				);
@@ -140,7 +140,7 @@ export class MeekMap<K extends WeakKey, V> {
 		if (ref) {
 			const key = ref.deref();
 			if (key) {
-				return this.#vv.get(key);
+				return this.#kv.get(key);
 			}
 		}
 	}
@@ -184,7 +184,7 @@ export class MeekMap<K extends WeakKey, V> {
 			this.#kwk.set(key, ref);
 		}
 		this.#wk.add(ref);
-		this.#vv.set(key, value);
+		this.#kv.set(key, value);
 		return this;
 	}
 
@@ -205,7 +205,7 @@ export class MeekMap<K extends WeakKey, V> {
 		for (const ref of this.#wk) {
 			const key = ref.deref();
 			if (key) {
-				yield this.#vv.get(key) as V;
+				yield this.#kv.get(key) as V;
 			}
 		}
 	}
