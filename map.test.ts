@@ -135,6 +135,56 @@ Deno.test('MeekMap: forEach', () => {
 	assert(pairs);
 });
 
+Deno.test('MeekMap: Symbol.iterator', () => {
+	const pairs: readonly [{ i: number }, number][] = new Array(100).fill(0)
+		.map((_, i) => [{ i }, i]);
+	const map = new MeekMap(pairs);
+	let i = 0;
+	for (const [key, value] of map) {
+		assertStrictEquals(value, pairs[i][1]);
+		assertStrictEquals(key, pairs[i][0]);
+		i++;
+	}
+	assert(pairs);
+});
+
+Deno.test('MeekMap: entries', () => {
+	const pairs: readonly [{ i: number }, number][] = new Array(100).fill(0)
+		.map((_, i) => [{ i }, i]);
+	const map = new MeekMap(pairs);
+	let i = 0;
+	for (const [key, value] of map.entries()) {
+		assertStrictEquals(value, pairs[i][1]);
+		assertStrictEquals(key, pairs[i][0]);
+		i++;
+	}
+	assert(pairs);
+});
+
+Deno.test('MeekMap: keys', () => {
+	const pairs: readonly [{ i: number }, number][] = new Array(100).fill(0)
+		.map((_, i) => [{ i }, i]);
+	const map = new MeekMap(pairs);
+	let i = 0;
+	for (const key of map.keys()) {
+		assertStrictEquals(key, pairs[i][0]);
+		i++;
+	}
+	assert(pairs);
+});
+
+Deno.test('MeekMap: values', () => {
+	const pairs: readonly [{ i: number }, number][] = new Array(100).fill(0)
+		.map((_, i) => [{ i }, i]);
+	const map = new MeekMap(pairs);
+	let i = 0;
+	for (const key of map.values()) {
+		assertStrictEquals(key, pairs[i][1]);
+		i++;
+	}
+	assert(pairs);
+});
+
 Deno.test('MeekMap: GC', async () => {
 	let total = 0;
 	const pairs = new Map();
