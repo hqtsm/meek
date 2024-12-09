@@ -55,7 +55,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 *
 	 * @returns Key-value iterator.
 	 */
-	public *[Symbol.iterator](): IterableIterator<[K, V]> {
+	public *[Symbol.iterator](): Generator<[K, V], undefined, unknown> {
 		for (const ref of this.#wk) {
 			const key = ref.deref();
 			if (key) {
@@ -102,7 +102,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 *
 	 * @returns Key-value iterator.
 	 */
-	public *entries(): IterableIterator<[K, V]> {
+	public *entries(): Generator<[K, V], undefined, unknown> {
 		for (const ref of this.#wk) {
 			const key = ref.deref();
 			if (key) {
@@ -165,7 +165,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 *
 	 * @returns Key iterator.
 	 */
-	public *keys(): IterableIterator<K> {
+	public *keys(): Generator<K, undefined, unknown> {
 		for (const ref of this.#wk) {
 			const key = ref.deref();
 			if (key) {
@@ -206,7 +206,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 *
 	 * @returns Value iterator.
 	 */
-	public *values(): IterableIterator<V> {
+	public *values(): Generator<V, undefined, unknown> {
 		for (const ref of this.#wk) {
 			const key = ref.deref();
 			if (key) {
