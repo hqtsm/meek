@@ -135,7 +135,7 @@ Deno.test('MeekValueMap: forEach', () => {
 	assert(pairs);
 });
 
-Deno.test('MeekValueMap: GC callback', async () => {
+Deno.test('MeekValueMap: GC', async () => {
 	let total = 0;
 	const pairs = new Map();
 	const map = new MeekValueMap();

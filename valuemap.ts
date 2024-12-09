@@ -87,15 +87,7 @@ export class MeekValueMap<K, V extends WeakKey> {
 	 * @returns Value for the key.
 	 */
 	public get(key: K): V | undefined {
-		const ref = this.#map.get(key);
-		if (ref) {
-			const value = ref.deref();
-			if (!value) {
-				this.#fr.unregister(ref);
-				this.#map.delete(key);
-			}
-			return value;
-		}
+		return this.#map.get(key)?.deref();
 	}
 
 	/**
@@ -105,16 +97,7 @@ export class MeekValueMap<K, V extends WeakKey> {
 	 * @returns Whether the key is in this map.
 	 */
 	public has(key: K): boolean {
-		const ref = this.#map.get(key);
-		if (ref) {
-			const value = ref.deref();
-			if (!value) {
-				this.#fr.unregister(ref);
-				this.#map.delete(key);
-			}
-			return !!value;
-		}
-		return false;
+		return !!this.#map.get(key)?.deref();
 	}
 
 	/**
