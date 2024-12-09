@@ -38,6 +38,20 @@ export class MeekValueMap<K, V extends WeakKey> {
 	}
 
 	/**
+	 * Iterator for key-value pairs in this map.
+	 *
+	 * @returns Key-value iterator.
+	 */
+	public *[Symbol.iterator](): IterableIterator<[K, V]> {
+		for (const [key, ref] of this.#map) {
+			const value = ref.deref();
+			if (value) {
+				yield [key, value];
+			}
+		}
+	}
+
+	/**
 	 * Clear this map.
 	 */
 	public clear(): void {
@@ -60,6 +74,20 @@ export class MeekValueMap<K, V extends WeakKey> {
 			return this.#map.delete(key);
 		}
 		return false;
+	}
+
+	/**
+	 * Iterator for key-value pairs in this map.
+	 *
+	 * @returns Key-value iterator.
+	 */
+	public *entries(): IterableIterator<[K, V]> {
+		for (const [key, ref] of this.#map) {
+			const value = ref.deref();
+			if (value) {
+				yield [key, value];
+			}
+		}
 	}
 
 	/**
@@ -101,6 +129,19 @@ export class MeekValueMap<K, V extends WeakKey> {
 	}
 
 	/**
+	 * Iterator for keys in this map.
+	 *
+	 * @returns Key iterator.
+	 */
+	public *keys(): IterableIterator<K> {
+		for (const [key, ref] of this.#map) {
+			if (ref.deref()) {
+				yield key;
+			}
+		}
+	}
+
+	/**
 	 * Set a value for a key in this map.
 	 *
 	 * @param key Key to set.
@@ -124,5 +165,19 @@ export class MeekValueMap<K, V extends WeakKey> {
 	 */
 	public get size(): number {
 		return this.#map.size;
+	}
+
+	/**
+	 * Iterator for values in this map.
+	 *
+	 * @returns Value iterator.
+	 */
+	public *values(): IterableIterator<V> {
+		for (const [, ref] of this.#map) {
+			const value = ref.deref();
+			if (value) {
+				yield value;
+			}
+		}
 	}
 }
