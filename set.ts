@@ -99,9 +99,9 @@ export class MeekSet<T extends WeakKey> {
 	}
 
 	/**
-	 * Iterator for values in this set.
+	 * Iterator for key-value pairs in this set.
 	 *
-	 * @returns Set iterator.
+	 * @returns Key-value iterator.
 	 */
 	public *entries(): IterableIterator<[T, T]> {
 		for (const ref of this.#set) {
@@ -141,9 +141,9 @@ export class MeekSet<T extends WeakKey> {
 	}
 
 	/**
-	 * Iterator for values in this set.
+	 * Iterator for keys in this set.
 	 *
-	 * @returns Set iterator.
+	 * @returns Key iterator.
 	 */
 	public *keys(): IterableIterator<T> {
 		for (const ref of this.#set) {
@@ -165,7 +165,7 @@ export class MeekSet<T extends WeakKey> {
 	/**
 	 * Iterator for values in this set.
 	 *
-	 * @returns Set iterator.
+	 * @returns Value iterator.
 	 */
 	public *values(): IterableIterator<T> {
 		for (const ref of this.#set) {
