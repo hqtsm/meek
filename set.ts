@@ -64,7 +64,7 @@ export class MeekSet<T extends WeakKey> {
 	 */
 	public add(value: T): this {
 		let ref = this.#map.get(value);
-		if (!ref || !this.#set.has(ref) || !ref.deref()) {
+		if (!ref) {
 			ref = new WeakRef(value);
 			this.#fr.register(value, ref, value);
 			this.#map.set(value, ref);
