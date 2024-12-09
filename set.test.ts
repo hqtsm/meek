@@ -145,6 +145,11 @@ Deno.test('MeekSet: values', () => {
 	assert(values);
 });
 
+Deno.test('MeekSet: Symbol.toStringTag', () => {
+	const set = new MeekSet();
+	assertStrictEquals(String(set), `[object ${MeekSet.name}]`);
+});
+
 Deno.test('MeekSet: GC', async () => {
 	let total = 0;
 	const values = new Set<{ i: number; data: Uint8Array }>();

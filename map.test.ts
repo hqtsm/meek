@@ -185,6 +185,11 @@ Deno.test('MeekMap: values', () => {
 	assert(pairs);
 });
 
+Deno.test('MeekMap: Symbol.toStringTag', () => {
+	const set = new MeekMap();
+	assertStrictEquals(String(set), `[object ${MeekMap.name}]`);
+});
+
 Deno.test('MeekMap: GC', async () => {
 	let total = 0;
 	const pairs = new Map();
