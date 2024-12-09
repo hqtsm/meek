@@ -47,7 +47,7 @@ export class MeekSet<T extends WeakKey> {
 	 *
 	 * @returns Set iterator.
 	 */
-	public *[Symbol.iterator](): SetIterator<T> {
+	public *[Symbol.iterator](): IterableIterator<T> {
 		for (const ref of this.#set) {
 			const value = ref.deref();
 			if (value) {
@@ -103,7 +103,7 @@ export class MeekSet<T extends WeakKey> {
 	 *
 	 * @returns Set iterator.
 	 */
-	public *entries(): SetIterator<[T, T]> {
+	public *entries(): IterableIterator<[T, T]> {
 		for (const ref of this.#set) {
 			const value = ref.deref();
 			if (value) {
@@ -145,7 +145,7 @@ export class MeekSet<T extends WeakKey> {
 	 *
 	 * @returns Set iterator.
 	 */
-	public *keys(): SetIterator<T> {
+	public *keys(): IterableIterator<T> {
 		for (const ref of this.#set) {
 			const value = ref.deref();
 			if (value) {
@@ -167,7 +167,7 @@ export class MeekSet<T extends WeakKey> {
 	 *
 	 * @returns Set iterator.
 	 */
-	public *values(): SetIterator<T> {
+	public *values(): IterableIterator<T> {
 		for (const ref of this.#set) {
 			const value = ref.deref();
 			if (value) {
