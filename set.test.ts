@@ -150,6 +150,19 @@ Deno.test('MeekSet: Symbol.toStringTag', () => {
 	assertStrictEquals(String(set), `[object ${MeekSet.name}]`);
 });
 
+Deno.test('MeekSet: union', () => {
+	const values = new Array(100).fill(0).map((_, i) => ({ i }));
+	const a = new MeekSet(values.slice(0, 30));
+	const b = new MeekSet(values.slice(30, 60));
+	const c = new Set(values.slice(60));
+	const all = a.union(b).union(c);
+	let i = 0;
+	for (const value of all) {
+		assertStrictEquals(value, values[i++]);
+	}
+	assert(values);
+});
+
 Deno.test('MeekSet: GC', async () => {
 	let total = 0;
 	const values = new Set<{ i: number; data: Uint8Array }>();

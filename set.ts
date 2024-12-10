@@ -168,6 +168,27 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	}
 
 	/**
+	 * New MeekSet containing all values in both sets.
+	 *
+	 * @param other Other set.
+	 * @returns New MeekSet.
+	 */
+	public union<U extends WeakKey>(other: ReadonlySetLike<U>): MeekSet<T | U> {
+		const set = new MeekSet<T | U>();
+		for (const ref of this.#wv) {
+			const value = ref.deref();
+			if (value) {
+				set.add(value);
+			}
+		}
+		const itter = other.keys();
+		for (let result = itter.next(); !result.done; result = itter.next()) {
+			set.add(result.value);
+		}
+		return set;
+	}
+
+	/**
 	 * Iterator for values in this set.
 	 *
 	 * @returns Value iterator.
