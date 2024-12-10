@@ -261,6 +261,12 @@ Deno.test('MeekSet: symmetricDifference', () => {
 		assert(value.i < 60 || value.i >= 70);
 	}
 	assertStrictEquals(all.size, 80);
+	if ('symmetricDifference' in Set.prototype) {
+		assertStrictEquals(
+			new Set(values.slice(10)).symmetricDifference(a).size,
+			70,
+		);
+	}
 	assert(values);
 });
 
@@ -275,6 +281,9 @@ Deno.test('MeekSet: union', () => {
 		assertStrictEquals(value, values[i++]);
 	}
 	assertStrictEquals(all.size, values.length);
+	if ('union' in Set.prototype) {
+		assertStrictEquals(new Set(values.slice(90)).union(a).size, 50);
+	}
 	assert(values);
 });
 
