@@ -168,7 +168,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	}
 
 	/**
-	 * New MeekSet containing all values in both sets.
+	 * New MeekSet containing all values from both sets.
 	 *
 	 * @param other Other set.
 	 * @returns New MeekSet.
