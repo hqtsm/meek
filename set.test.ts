@@ -161,6 +161,7 @@ Deno.test('MeekSet: difference', () => {
 		assertStrictEquals(value, values[i++]);
 	}
 	assertStrictEquals(all.size, 70);
+	assertStrictEquals(new Set(values.slice(10)).difference(a).size, 10);
 	assert(values);
 });
 
@@ -175,6 +176,7 @@ Deno.test('MeekSet: intersection', () => {
 		assertStrictEquals(value, values[i++]);
 	}
 	assertStrictEquals(all.size, 20);
+	assertStrictEquals(new Set(values.slice(10)).intersection(a).size, 60);
 	assert(values);
 });
 
@@ -189,6 +191,8 @@ Deno.test('MeekSet: isDisjointFrom', () => {
 		false,
 	);
 	assertStrictEquals(set.isDisjointFrom(new Set([1])), true);
+	assertStrictEquals(new Set(values.slice(10)).isDisjointFrom(set), false);
+	assertStrictEquals(new Set([1, 2, 3]).isDisjointFrom(set), true);
 	assert(values);
 });
 
@@ -200,6 +204,8 @@ Deno.test('MeekSet: isSubsetOf', () => {
 	assertStrictEquals(new MeekSet(values.slice(0, 91)).isSubsetOf(set), false);
 	assertStrictEquals(new MeekSet(values.slice(90)).isSubsetOf(set), false);
 	assertStrictEquals(new MeekSet(values).isSubsetOf(new Set([1])), false);
+	assertStrictEquals(new Set(values).isSubsetOf(new MeekSet([{}])), false);
+	assertStrictEquals(new Set(set).isSubsetOf(set), true);
 	assert(values);
 });
 
@@ -220,6 +226,8 @@ Deno.test('MeekSet: isSupersetOf', () => {
 		false,
 	);
 	assertStrictEquals(new MeekSet(values).isSupersetOf(new Set([1])), false);
+	assertStrictEquals(new Set(values).isSupersetOf(new MeekSet([{}])), false);
+	assertStrictEquals(new Set(values).isSupersetOf(set), true);
 	assert(values);
 });
 
