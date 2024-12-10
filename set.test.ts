@@ -160,6 +160,7 @@ Deno.test('MeekSet: union', () => {
 	for (const value of all) {
 		assertStrictEquals(value, values[i++]);
 	}
+	assertStrictEquals(all.size, values.length);
 	assert(values);
 });
 
