@@ -178,20 +178,6 @@ Deno.test('MeekSet: intersection', () => {
 	assert(values);
 });
 
-Deno.test('MeekSet: union', () => {
-	const values = new Array(100).fill(0).map((_, i) => ({ i }));
-	const a = new MeekSet(values.slice(0, 40));
-	const b = new MeekSet(values.slice(30, 70));
-	const c = new Set(values.slice(60));
-	const all = a.union(b).union(c);
-	let i = 0;
-	for (const value of all) {
-		assertStrictEquals(value, values[i++]);
-	}
-	assertStrictEquals(all.size, values.length);
-	assert(values);
-});
-
 Deno.test('MeekSet: symmetricDifference', () => {
 	const values = new Array(100).fill(0).map((_, i) => ({ i }));
 	const a = new MeekSet(values.slice(0, 40));
@@ -203,6 +189,20 @@ Deno.test('MeekSet: symmetricDifference', () => {
 		assert(value.i < 60 || value.i >= 70);
 	}
 	assertStrictEquals(all.size, 80);
+	assert(values);
+});
+
+Deno.test('MeekSet: union', () => {
+	const values = new Array(100).fill(0).map((_, i) => ({ i }));
+	const a = new MeekSet(values.slice(0, 40));
+	const b = new MeekSet(values.slice(30, 70));
+	const c = new Set(values.slice(60));
+	const all = a.union(b).union(c);
+	let i = 0;
+	for (const value of all) {
+		assertStrictEquals(value, values[i++]);
+	}
+	assertStrictEquals(all.size, values.length);
 	assert(values);
 });
 
