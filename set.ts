@@ -205,6 +205,12 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 		return this.#wv.size;
 	}
 
+	/**
+	 * New MeekSet containing the values in either set but not both.
+	 *
+	 * @param other Other set.
+	 * @returns New MeekSet.
+	 */
 	public symmetricDifference<U extends WeakKey>(
 		other: ReadonlySetLike<U>,
 	): MeekSet<T> {
