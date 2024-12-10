@@ -222,4 +222,6 @@ Deno.test('MeekMap: implements map', () => {
 	// Really just type checked.
 	const map: Map<[number], number> = new MeekMap([[[1], 123]]);
 	assert(map);
+	const weakMap: WeakMap<[number], number> = new MeekMap([[[1], 123]]);
+	assert(weakMap);
 });
