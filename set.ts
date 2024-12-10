@@ -213,8 +213,8 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 */
 	public symmetricDifference<U extends WeakKey>(
 		other: ReadonlySetLike<U>,
-	): MeekSet<T> {
-		const set = new MeekSet<T>();
+	): MeekSet<T | U> {
+		const set = new MeekSet<T | U>();
 		for (const ref of this.#wv) {
 			const value = ref.deref();
 			if (value && !other.has(value as unknown as U)) {
