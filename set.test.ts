@@ -152,8 +152,8 @@ Deno.test('MeekSet: Symbol.toStringTag', () => {
 
 Deno.test('MeekSet: union', () => {
 	const values = new Array(100).fill(0).map((_, i) => ({ i }));
-	const a = new MeekSet(values.slice(0, 30));
-	const b = new MeekSet(values.slice(30, 60));
+	const a = new MeekSet(values.slice(0, 40));
+	const b = new MeekSet(values.slice(30, 70));
 	const c = new Set(values.slice(60));
 	const all = a.union(b).union(c);
 	let i = 0;
