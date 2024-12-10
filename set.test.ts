@@ -189,6 +189,26 @@ Deno.test('MeekSet: isSubsetOf', () => {
 	assert(values);
 });
 
+Deno.test('MeekSet: isSupersetOf', () => {
+	const values = new Array(100).fill(0).map((_, i) => ({ i }));
+	const set = new MeekSet(values.slice(0, 90));
+	assertStrictEquals(set.isSupersetOf(set), true);
+	assertStrictEquals(
+		new MeekSet(values.slice(0, 90)).isSupersetOf(set),
+		true,
+	);
+	assertStrictEquals(
+		new MeekSet(values.slice(0, 91)).isSupersetOf(set),
+		true,
+	);
+	assertStrictEquals(
+		new MeekSet(values.slice(0, 89)).isSupersetOf(set),
+		false,
+	);
+	assertStrictEquals(new MeekSet(values).isSupersetOf(new Set([1])), false);
+	assert(values);
+});
+
 Deno.test('MeekSet: symmetricDifference', () => {
 	const values = new Array(100).fill(0).map((_, i) => ({ i }));
 	const a = new MeekSet(values.slice(0, 40));

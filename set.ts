@@ -199,6 +199,17 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 		return true;
 	}
 
+	public isSupersetOf(other: ReadonlySetLike<unknown>): boolean {
+		const itter = other.keys();
+		for (let result = itter.next(); !result.done; result = itter.next()) {
+			const { value } = result as { value: T };
+			if (!this.#vwv.has(value)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * Iterator for keys in this set.
 	 *
