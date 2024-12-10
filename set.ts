@@ -159,7 +159,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * @returns Whether the value is in this set.
 	 */
 	public has(value: T): boolean {
-		return !!this.#vwv.get(value)?.deref();
+		return !!this.#vwv.get(value);
 	}
 
 	/**
