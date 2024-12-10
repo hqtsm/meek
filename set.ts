@@ -156,7 +156,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	): MeekSet<T & U> {
 		const set = new MeekSet<T & U>();
 		for (const ref of this.#wv) {
-			const value = ref.deref() as (T & U);
+			const value = ref.deref() as T & U;
 			if (value) {
 				if (other.has(value)) {
 					set.add(value);
