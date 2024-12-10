@@ -184,6 +184,22 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	}
 
 	/**
+	 * Is every value in this set in other set.
+	 *
+	 * @param other Other set.
+	 * @returns Whether every value in this set is in other set.
+	 */
+	public isSubsetOf(other: ReadonlySetLike<unknown>): boolean {
+		for (const ref of this.#wv) {
+			const value = ref.deref();
+			if (value && !other.has(value)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Iterator for keys in this set.
 	 *
 	 * @returns Key iterator.
