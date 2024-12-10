@@ -178,6 +178,20 @@ Deno.test('MeekSet: intersection', () => {
 	assert(values);
 });
 
+Deno.test('MeekSet: isDisjointFrom', () => {
+	const values = new Array(100).fill(0).map((_, i) => ({ i }));
+	const set = new MeekSet(values.slice(0, 90));
+	assertStrictEquals(set.isDisjointFrom(set), false);
+	assertStrictEquals(set.isDisjointFrom(new MeekSet(values.slice(90))), true);
+	assertStrictEquals(set.isDisjointFrom(new MeekSet(values.slice(91))), true);
+	assertStrictEquals(
+		set.isDisjointFrom(new MeekSet(values.slice(89))),
+		false,
+	);
+	assertStrictEquals(set.isDisjointFrom(new Set([1])), true);
+	assert(values);
+});
+
 Deno.test('MeekSet: isSubsetOf', () => {
 	const values = new Array(100).fill(0).map((_, i) => ({ i }));
 	const set = new MeekSet(values.slice(0, 90));
