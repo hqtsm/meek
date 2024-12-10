@@ -280,8 +280,22 @@ Deno.test('MeekSet: GC', async () => {
 
 Deno.test('MeekSet: implements set', () => {
 	// Really just type checked.
-	// const set: Set<[number]> = new MeekSet([[1], [2], [3]]);
-	// assert(set);
 	const weakSet: WeakSet<[number]> = new MeekSet([[1], [2], [3]]);
 	assert(weakSet);
+
+	// Very similar, but some methods have more restrictions.
+	const set: Omit<
+		Set<[number]>,
+		| 'forEach'
+		| 'union'
+		| 'symmetricDifference'
+		| 'intersection'
+		| 'difference'
+		| 'add'
+	> = new MeekSet([
+		[1],
+		[2],
+		[3],
+	]);
+	assert(set);
 });
