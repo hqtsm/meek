@@ -192,6 +192,20 @@ Deno.test('MeekSet: union', () => {
 	assert(values);
 });
 
+Deno.test('MeekSet: symmetricDifference', () => {
+	const values = new Array(100).fill(0).map((_, i) => ({ i }));
+	const a = new MeekSet(values.slice(0, 40));
+	const b = new MeekSet(values.slice(30, 70));
+	const c = new Set(values.slice(60));
+	const all = a.symmetricDifference(b).symmetricDifference(c);
+	for (const value of all) {
+		assert(value.i < 30 || value.i >= 40);
+		assert(value.i < 60 || value.i >= 70);
+	}
+	assertStrictEquals(all.size, 80);
+	assert(values);
+});
+
 Deno.test('MeekSet: GC', async () => {
 	let total = 0;
 	const values = new Set<{ i: number; data: Uint8Array }>();

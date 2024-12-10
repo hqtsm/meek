@@ -205,6 +205,26 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 		return this.#wv.size;
 	}
 
+	public symmetricDifference<U extends WeakKey>(
+		other: ReadonlySetLike<U>,
+	): MeekSet<T> {
+		const set = new MeekSet<T>();
+		for (const ref of this.#wv) {
+			const value = ref.deref();
+			if (value && !other.has(value as unknown as U)) {
+				set.add(value);
+			}
+		}
+		const itter = other.keys();
+		for (let result = itter.next(); !result.done; result = itter.next()) {
+			const { value } = result as { value: T & U };
+			if (!this.#vwv.has(value)) {
+				set.add(value);
+			}
+		}
+		return set;
+	}
+
 	/**
 	 * New MeekSet containing all values from both sets.
 	 *
