@@ -146,6 +146,27 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	}
 
 	/**
+	 * New MeekSet containing the values in both sets.
+	 *
+	 * @param other Other set.
+	 * @returns New MeekSet.
+	 */
+	public intersection<U extends WeakKey>(
+		other: ReadonlySetLike<U>,
+	): MeekSet<T & U> {
+		const set = new MeekSet<T & U>();
+		for (const ref of this.#wv) {
+			const value = ref.deref() as (T & U);
+			if (value) {
+				if (other.has(value)) {
+					set.add(value);
+				}
+			}
+		}
+		return set;
+	}
+
+	/**
 	 * Iterator for keys in this set.
 	 *
 	 * @returns Key iterator.
