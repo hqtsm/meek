@@ -199,6 +199,12 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 		return true;
 	}
 
+	/**
+	 * Is every value in other set in this set.
+	 *
+	 * @param other Other set.
+	 * @returns Whether every value in other set is in this set.
+	 */
 	public isSupersetOf(other: ReadonlySetLike<unknown>): boolean {
 		const itter = other.keys();
 		for (let result = itter.next(); !result.done; result = itter.next()) {
