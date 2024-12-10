@@ -104,6 +104,23 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	}
 
 	/**
+	 * New MeekSet containing the values in this set not in other set.
+	 *
+	 * @param other Other set.
+	 * @returns New MeekSet.
+	 */
+	public difference<U>(other: ReadonlySetLike<U>): MeekSet<T> {
+		const set = new MeekSet<T>();
+		for (const ref of this.#wv) {
+			const value = ref.deref();
+			if (value && !other.has(value as unknown as U)) {
+				set.add(value);
+			}
+		}
+		return set;
+	}
+
+	/**
 	 * Iterator for key-value pairs in this set.
 	 *
 	 * @returns Key-value iterator.

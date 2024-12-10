@@ -150,6 +150,20 @@ Deno.test('MeekSet: Symbol.toStringTag', () => {
 	assertStrictEquals(String(set), `[object ${MeekSet.name}]`);
 });
 
+Deno.test('MeekSet: difference', () => {
+	const values = new Array(100).fill(0).map((_, i) => ({ i }));
+	const a = new MeekSet(values.slice(0, 90));
+	const b = new MeekSet(values.slice(80));
+	const c = new Set([...values.slice(0, 10), NaN, true, null, Symbol(), {}]);
+	const all = a.difference(b).difference(c);
+	let i = 10;
+	for (const value of all) {
+		assertStrictEquals(value, values[i++]);
+	}
+	assertStrictEquals(all.size, 70);
+	assert(values);
+});
+
 Deno.test('MeekSet: intersection', () => {
 	const values = new Array(100).fill(0).map((_, i) => ({ i }));
 	const a = new MeekSet(values.slice(0, 70));
