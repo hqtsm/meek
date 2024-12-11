@@ -186,3 +186,11 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 		}
 	}
 }
+
+/**
+ * Readonly MeekValueMap.
+ */
+export type ReadonlyMeekValueMap<K = any, V extends WeakKey = WeakKey> = Omit<
+	MeekValueMap<K, V>,
+	'clear' | 'delete' | 'set'
+>;

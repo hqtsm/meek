@@ -315,3 +315,11 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 		}
 	}
 }
+
+/**
+ * Readonly MeekSet.
+ */
+export type ReadonlyMeekSet<T extends WeakKey> = Omit<
+	MeekSet<T>,
+	'add' | 'clear' | 'delete'
+>;
