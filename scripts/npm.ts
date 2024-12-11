@@ -69,6 +69,7 @@ await build({
 	},
 	typeCheck: 'both',
 	compilerOptions: {
+		target: 'Latest',
 		lib: ['ESNext'],
 		sourceMap: true,
 	},
