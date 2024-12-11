@@ -3,7 +3,10 @@
 	"version": "0.0.0",
 	"license": "MIT",
 	"exports": {
-		".": "./mod.ts"
+		".": "./mod.ts",
+		"./map": "./map.ts",
+		"./set": "./set.ts",
+		"./valuemap": "./valuemap.ts"
 	},
 	"imports": {
 		"@deno/dnt": "jsr:@deno/dnt@^0.41.3",
