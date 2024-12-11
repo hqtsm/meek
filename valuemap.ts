@@ -16,7 +16,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	/**
 	 * Map of keys to weak references to values.
 	 */
-	readonly #map: Map<K, WeakRef<V>>;
+	readonly #kwv: Map<K, WeakRef<V>>;
 
 	/**
 	 * Create a new MeekValueMap.
@@ -24,16 +24,16 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 * @param iterable Initial pairs.
 	 */
 	constructor(iterable?: Iterable<readonly [K, V]> | null) {
-		this.#map = new Map();
-		this.#fr = new FinalizationRegistry(this.#map.delete.bind(this.#map));
+		this.#kwv = new Map();
+		this.#fr = new FinalizationRegistry(this.#kwv.delete.bind(this.#kwv));
 		for (const [key, value] of iterable ?? []) {
-			let ref = this.#map.get(key);
+			let ref = this.#kwv.get(key);
 			if (ref) {
 				this.#fr.unregister(ref);
 			}
 			ref = new WeakRef(value);
 			this.#fr.register(value, key, ref);
-			this.#map.set(key, ref);
+			this.#kwv.set(key, ref);
 		}
 	}
 
@@ -43,7 +43,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 * @returns Key-value iterator.
 	 */
 	public *[Symbol.iterator](): Generator<[K, V], undefined, unknown> {
-		for (const [key, ref] of this.#map) {
+		for (const [key, ref] of this.#kwv) {
 			const value = ref.deref();
 			if (value) {
 				yield [key, value];
@@ -60,9 +60,9 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 * Clear this map.
 	 */
 	public clear(): void {
-		for (const [key, ref] of this.#map) {
+		for (const [key, ref] of this.#kwv) {
 			this.#fr.unregister(ref);
-			this.#map.delete(key);
+			this.#kwv.delete(key);
 		}
 	}
 
@@ -73,10 +73,10 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 * @returns Whether the key was deleted.
 	 */
 	public delete(key: K): boolean {
-		const ref = this.#map.get(key);
+		const ref = this.#kwv.get(key);
 		if (ref) {
 			this.#fr.unregister(ref);
-			return this.#map.delete(key);
+			return this.#kwv.delete(key);
 		}
 		return false;
 	}
@@ -87,7 +87,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 * @returns Key-value iterator.
 	 */
 	public *entries(): Generator<[K, V], undefined, unknown> {
-		for (const [key, ref] of this.#map) {
+		for (const [key, ref] of this.#kwv) {
 			const value = ref.deref();
 			if (value) {
 				yield [key, value];
@@ -105,7 +105,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 		callbackfn: (value: V, key: K, map: MeekValueMap<K, V>) => void,
 		thisArg?: any,
 	): void {
-		for (const [key, ref] of this.#map) {
+		for (const [key, ref] of this.#kwv) {
 			const value = ref.deref();
 			if (value) {
 				callbackfn.call(thisArg, value, key, this);
@@ -120,7 +120,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 * @returns Value for the key.
 	 */
 	public get(key: K): V | undefined {
-		return this.#map.get(key)?.deref();
+		return this.#kwv.get(key)?.deref();
 	}
 
 	/**
@@ -130,7 +130,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 * @returns Whether the key is in this map.
 	 */
 	public has(key: K): boolean {
-		return !!this.#map.get(key)?.deref();
+		return !!this.#kwv.get(key)?.deref();
 	}
 
 	/**
@@ -139,7 +139,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 * @returns Key iterator.
 	 */
 	public *keys(): Generator<K, undefined, unknown> {
-		for (const [key, ref] of this.#map) {
+		for (const [key, ref] of this.#kwv) {
 			if (ref.deref()) {
 				yield key;
 			}
@@ -155,12 +155,12 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 */
 	public set(key: K, value: V): this {
 		const ref = new WeakRef(value);
-		const old = this.#map.get(key);
+		const old = this.#kwv.get(key);
 		if (old) {
 			this.#fr.unregister(old);
 		}
 		this.#fr.register(value, key, ref);
-		this.#map.set(key, ref);
+		this.#kwv.set(key, ref);
 		return this;
 	}
 
@@ -169,7 +169,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 * Can be higher than the number of active keys.
 	 */
 	public get size(): number {
-		return this.#map.size;
+		return this.#kwv.size;
 	}
 
 	/**
@@ -178,7 +178,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 * @returns Value iterator.
 	 */
 	public *values(): Generator<V, undefined, unknown> {
-		for (const [, ref] of this.#map) {
+		for (const [, ref] of this.#kwv) {
 			const value = ref.deref();
 			if (value) {
 				yield value;
