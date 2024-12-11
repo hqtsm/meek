@@ -9,6 +9,10 @@ Weak data collections without the limitations
 ![iterable](https://img.shields.io/badge/iterable-eee)
 ![collection](https://img.shields.io/badge/collection-eee)
 
+[![JSR](https://jsr.io/badges/@hqtsm/meek)](https://jsr.io/@hqtsm/meek)
+[![npm](https://img.shields.io/npm/v/@hqtsm/meek.svg)](https://npmjs.com/package/@hqtsm/meek)
+[![CI](https://github.com/hqtsm/meek/actions/workflows/ci.yaml/badge.svg)](https://github.com/hqtsm/meek/actions/workflows/ci.yaml)
+
 # Features
 
 - Pure TypeScript, run anywhere
