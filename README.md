@@ -2,6 +2,13 @@
 
 Weak data collections without the limitations
 
+![weakset](https://img.shields.io/badge/weakset-eee)
+![weakmap](https://img.shields.io/badge/weakmap-eee)
+![weakvaluemap](https://img.shields.io/badge/weakvaluemap-eee)
+![enumerable](https://img.shields.io/badge/enumerable-eee)
+![iterable](https://img.shields.io/badge/iterable-eee)
+![collection](https://img.shields.io/badge/collection-eee)
+
 # Features
 
 - Pure TypeScript, run anywhere
