@@ -1,4 +1,9 @@
-import { assert, assertLess, assertStrictEquals } from '@std/assert';
+import {
+	assert,
+	assertEquals,
+	assertLess,
+	assertStrictEquals,
+} from '@std/assert';
 
 import { MeekSet } from './set.ts';
 
@@ -311,6 +316,33 @@ Deno.test('MeekSet: GC', async () => {
 	set.forEach((value) => {
 		assertStrictEquals(values.has(value), value.i < 10);
 	});
+	assert(values);
+});
+
+Deno.test('MeekSet: modify while itter', () => {
+	const values = new Array(100).fill(0).map((_, i) => ({ i }));
+	const setExpt = new Set(values.slice(0, 60));
+	const setTest = new MeekSet(values.slice(0, 60));
+	const readWhileModify = (
+		set: Set<{ i: number }> | MeekSet<{ i: number }>,
+	) => {
+		const r: WeakKey[] = [];
+		let i = 0;
+		for (const v of set) {
+			r.push(v);
+			set.delete(values[v.i + 1]);
+			if (i++ === 10) {
+				set.clear();
+				for (const v of values.slice(50)) {
+					set.add(v);
+				}
+			}
+		}
+		return r;
+	};
+	const valExpt = readWhileModify(setExpt);
+	const valTest = readWhileModify(setTest);
+	assertEquals(valExpt, valTest);
 	assert(values);
 });
 

@@ -1,4 +1,9 @@
-import { assert, assertLess, assertStrictEquals } from '@std/assert';
+import {
+	assert,
+	assertEquals,
+	assertLess,
+	assertStrictEquals,
+} from '@std/assert';
 
 import { MeekValueMap } from './valuemap.ts';
 
@@ -221,6 +226,32 @@ Deno.test('MeekValueMap: GC', async () => {
 		}
 	});
 	assertStrictEquals(found, pairs.size);
+	assert(pairs);
+});
+
+Deno.test('MeekValueMap: modify while itter', () => {
+	const pairs: readonly [number, { i: number }][] = new Array(100).fill(0)
+		.map((_, i) => [i, { i }]);
+	const mapExpt = new Map(pairs.slice(0, 60));
+	const mapTest = new MeekValueMap(pairs.slice(0, 60));
+	const readWhileModify = (map: Map<number, WeakKey> | MeekValueMap) => {
+		const r: number[] = [];
+		let i = 0;
+		for (const [k] of map) {
+			r.push(k);
+			map.delete(pairs[k + 1][0]);
+			if (i++ === 10) {
+				map.clear();
+				for (const [k, v] of pairs.slice(50)) {
+					map.set(k, v);
+				}
+			}
+		}
+		return r;
+	};
+	const valExpt = readWhileModify(mapExpt);
+	const valTest = readWhileModify(mapTest);
+	assertEquals(valExpt, valTest);
 	assert(pairs);
 });
 

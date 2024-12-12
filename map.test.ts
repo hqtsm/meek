@@ -1,4 +1,9 @@
-import { assert, assertLess, assertStrictEquals } from '@std/assert';
+import {
+	assert,
+	assertEquals,
+	assertLess,
+	assertStrictEquals,
+} from '@std/assert';
 
 import { MeekMap } from './map.ts';
 
@@ -215,6 +220,32 @@ Deno.test('MeekMap: GC', async () => {
 	map.forEach((value, key) => {
 		assertStrictEquals(value, pairs.has(key) ? pairs.get(key) : -1);
 	});
+	assert(pairs);
+});
+
+Deno.test('MeekMap: modify while itter', () => {
+	const pairs: readonly [{ i: number }, number][] = new Array(100).fill(0)
+		.map((_, i) => [{ i }, i]);
+	const mapExpt = new Map(pairs.slice(0, 60));
+	const mapTest = new MeekMap(pairs.slice(0, 60));
+	const readWhileModify = (map: Map<WeakKey, number> | MeekMap) => {
+		const r: number[] = [];
+		let i = 0;
+		for (const [_, v] of map) {
+			r.push(v);
+			map.delete(pairs[v + 1][0]);
+			if (i++ === 10) {
+				map.clear();
+				for (const [k, v] of pairs.slice(50)) {
+					map.set(k, v);
+				}
+			}
+		}
+		return r;
+	};
+	const valExpt = readWhileModify(mapExpt);
+	const valTest = readWhileModify(mapTest);
+	assertEquals(valExpt, valTest);
 	assert(pairs);
 });
 
