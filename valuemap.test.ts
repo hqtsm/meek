@@ -229,7 +229,7 @@ Deno.test('MeekValueMap: GC', async () => {
 	assert(pairs);
 });
 
-Deno.test('MeekValueMap: modify while itter', () => {
+Deno.test('MeekValueMap: modify while iterating', () => {
 	const pairs: readonly [number, { i: number }][] = new Array(100).fill(0)
 		.map((_, i) => [i, { i }]);
 	const mapExpt = new Map(pairs.slice(0, 60));

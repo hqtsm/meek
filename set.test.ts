@@ -319,7 +319,7 @@ Deno.test('MeekSet: GC', async () => {
 	assert(values);
 });
 
-Deno.test('MeekSet: modify while itter', () => {
+Deno.test('MeekSet: modify while iterating', () => {
 	const values = new Array(100).fill(0).map((_, i) => ({ i }));
 	const setExpt = new Set(values.slice(0, 60));
 	const setTest = new MeekSet(values.slice(0, 60));

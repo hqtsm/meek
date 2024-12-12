@@ -234,8 +234,8 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 */
 	public isSupersetOf(other: ReadonlySetLike<unknown>): boolean {
 		const p = pri.get(this) as Pri<T>;
-		const itter = other.keys();
-		for (let result = itter.next(); !result.done; result = itter.next()) {
+		const it = other.keys();
+		for (let result = it.next(); !result.done; result = it.next()) {
 			const { value } = result as { value: T };
 			if (!p.vwv.has(value)) {
 				return false;
@@ -283,8 +283,8 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 				set.add(value);
 			}
 		}
-		const itter = other.keys();
-		for (let result = itter.next(); !result.done; result = itter.next()) {
+		const it = other.keys();
+		for (let result = it.next(); !result.done; result = it.next()) {
 			const { value } = result as { value: T & U };
 			if (!p.vwv.has(value)) {
 				set.add(value);
@@ -307,8 +307,8 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 				set.add(value);
 			}
 		}
-		const itter = other.keys();
-		for (let result = itter.next(); !result.done; result = itter.next()) {
+		const it = other.keys();
+		for (let result = it.next(); !result.done; result = it.next()) {
 			set.add(result.value);
 		}
 		return set;
