@@ -5,49 +5,57 @@
  */
 
 /**
- * Like WeakMap.
+ * Private data.
  */
-export class MeekMap<K extends WeakKey = WeakKey, V = any> {
+interface Pri<K extends WeakKey = WeakKey, V = any> {
 	/**
 	 * Finalization registry.
 	 */
-	readonly #fr: FinalizationRegistry<WeakRef<K>>;
+	readonly fr: FinalizationRegistry<WeakRef<K>>;
 
 	/**
 	 * Map of keys to weak references to keys.
 	 */
-	#kwk: WeakMap<K, WeakRef<K>>;
+	kwk: WeakMap<K, WeakRef<K>>;
 
 	/**
 	 * Set of weak references to keys.
 	 */
-	readonly #wk: Set<WeakRef<K>>;
+	readonly wk: Set<WeakRef<K>>;
 
 	/**
 	 * Map of keys to values.
 	 */
-	#kv: WeakMap<K, V>;
+	kv: WeakMap<K, V>;
+}
 
+let pri: WeakMap<MeekMap, Pri>;
+
+/**
+ * Like WeakMap.
+ */
+export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	/**
 	 * Create a new MeekMap.
 	 *
 	 * @param iterable Initial pairs.
 	 */
 	constructor(iterable?: Iterable<readonly [K, V]> | null) {
-		this.#kwk = new WeakMap();
-		this.#wk = new Set();
-		this.#fr = new FinalizationRegistry(this.#wk.delete.bind(this.#wk));
-		this.#kv = new WeakMap();
+		const kwk = new WeakMap<K, WeakRef<K>>();
+		const wk = new Set<WeakRef<K>>();
+		const fr = new FinalizationRegistry(wk.delete.bind(wk));
+		const kv = new WeakMap<K, V>();
 		for (const [key, value] of iterable ?? []) {
-			let ref = this.#kwk.get(key);
+			let ref = kwk.get(key);
 			if (!ref) {
 				ref = new WeakRef(key);
-				this.#fr.register(key, ref, key);
-				this.#kwk.set(key, ref);
-				this.#wk.add(ref);
+				fr.register(key, ref, key);
+				kwk.set(key, ref);
+				wk.add(ref);
 			}
-			this.#kv.set(key, value);
+			kv.set(key, value);
 		}
+		(pri ??= new WeakMap()).set(this, { fr, kwk, wk, kv });
 	}
 
 	/**
@@ -56,10 +64,11 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * @returns Key-value iterator.
 	 */
 	public *[Symbol.iterator](): Generator<[K, V], undefined, unknown> {
-		for (const ref of this.#wk) {
+		const p = pri.get(this) as Pri<K, V>;
+		for (const ref of p.wk) {
 			const key = ref.deref();
 			if (key) {
-				yield [key, this.#kv.get(key) as V];
+				yield [key, p.kv.get(key) as V];
 			}
 		}
 	}
@@ -73,11 +82,12 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * Clear this map.
 	 */
 	public clear(): void {
+		const p = pri.get(this) as Pri<K, V>;
 		const map = new WeakMap();
 		const values = new WeakMap();
-		this.#wk.clear();
-		this.#kwk = map;
-		this.#kv = values;
+		p.wk.clear();
+		p.kwk = map;
+		p.kv = values;
 	}
 
 	/**
@@ -87,12 +97,13 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * @returns Whether the key was deleted.
 	 */
 	public delete(key: K): boolean {
-		const ref = this.#kwk.get(key);
+		const { fr, kv, kwk, wk } = pri.get(this) as Pri<K, V>;
+		const ref = kwk.get(key);
 		if (ref) {
-			this.#fr.unregister(key);
-			this.#kwk.delete(key);
-			this.#kv.delete(key);
-			return this.#wk.delete(ref);
+			fr.unregister(key);
+			kwk.delete(key);
+			kv.delete(key);
+			return wk.delete(ref);
 		}
 		return false;
 	}
@@ -103,10 +114,11 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * @returns Key-value iterator.
 	 */
 	public *entries(): Generator<[K, V], undefined, unknown> {
-		for (const ref of this.#wk) {
+		const p = pri.get(this) as Pri<K, V>;
+		for (const ref of p.wk) {
 			const key = ref.deref();
 			if (key) {
-				yield [key, this.#kv.get(key) as V];
+				yield [key, p.kv.get(key) as V];
 			}
 		}
 	}
@@ -121,15 +133,11 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 		callbackfn: (value: V, key: K, map: MeekMap<K, V>) => void,
 		thisArg?: any,
 	): void {
-		for (const ref of this.#wk) {
+		const p = pri.get(this) as Pri<K, V>;
+		for (const ref of p.wk) {
 			const key = ref.deref();
 			if (key) {
-				callbackfn.call(
-					thisArg,
-					this.#kv.get(key) as V,
-					key,
-					this,
-				);
+				callbackfn.call(thisArg, p.kv.get(key) as V, key, this);
 			}
 		}
 	}
@@ -141,11 +149,12 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * @returns Value for the key.
 	 */
 	public get(key: K): V | undefined {
-		const ref = this.#kwk.get(key);
+		const { kv, kwk } = pri.get(this) as Pri<K, V>;
+		const ref = kwk.get(key);
 		if (ref) {
 			const key = ref.deref();
 			if (key) {
-				return this.#kv.get(key);
+				return kv.get(key);
 			}
 		}
 	}
@@ -157,7 +166,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * @returns Whether the key is in this map.
 	 */
 	public has(key: K): boolean {
-		return !!this.#kwk.get(key)?.deref();
+		return !!(pri.get(this) as Pri<K, V>).kwk.get(key)?.deref();
 	}
 
 	/**
@@ -166,7 +175,8 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * @returns Key iterator.
 	 */
 	public *keys(): Generator<K, undefined, unknown> {
-		for (const ref of this.#wk) {
+		const { wk } = pri.get(this) as Pri<K, V>;
+		for (const ref of wk) {
 			const key = ref.deref();
 			if (key) {
 				yield key;
@@ -182,14 +192,15 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * @returns This map.
 	 */
 	public set(key: K, value: V): this {
-		let ref = this.#kwk.get(key);
+		const { fr, kv, kwk, wk } = pri.get(this) as Pri<K, V>;
+		let ref = kwk.get(key);
 		if (!ref) {
 			ref = new WeakRef(key);
-			this.#fr.register(key, ref, key);
-			this.#kwk.set(key, ref);
+			fr.register(key, ref, key);
+			kwk.set(key, ref);
 		}
-		this.#wk.add(ref);
-		this.#kv.set(key, value);
+		wk.add(ref);
+		kv.set(key, value);
 		return this;
 	}
 
@@ -198,7 +209,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * Can be higher than the number of active keys.
 	 */
 	public get size(): number {
-		return this.#wk.size;
+		return (pri.get(this) as Pri<K, V>).wk.size;
 	}
 
 	/**
@@ -207,10 +218,11 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * @returns Value iterator.
 	 */
 	public *values(): Generator<V, undefined, unknown> {
-		for (const ref of this.#wk) {
+		const p = pri.get(this) as Pri<K, V>;
+		for (const ref of p.wk) {
 			const key = ref.deref();
 			if (key) {
-				yield this.#kv.get(key) as V;
+				yield p.kv.get(key) as V;
 			}
 		}
 	}

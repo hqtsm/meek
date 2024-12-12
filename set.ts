@@ -5,41 +5,49 @@
  */
 
 /**
- * Like WeakSet.
+ * Private data.
  */
-export class MeekSet<T extends WeakKey = WeakKey> {
+interface Pri<T extends WeakKey = WeakKey> {
 	/**
 	 * Finalization registry.
 	 */
-	readonly #fr: FinalizationRegistry<WeakRef<T>>;
+	readonly fr: FinalizationRegistry<WeakRef<T>>;
 
 	/**
 	 * Map of values to weak references.
 	 */
-	#vwv: WeakMap<T, WeakRef<T>>;
+	vwv: WeakMap<T, WeakRef<T>>;
 
 	/**
 	 * Set of weak references to values.
 	 */
-	readonly #wv: Set<WeakRef<T>>;
+	readonly wv: Set<WeakRef<T>>;
+}
 
+let pri: WeakMap<MeekSet, Pri>;
+
+/**
+ * Like WeakSet.
+ */
+export class MeekSet<T extends WeakKey = WeakKey> {
 	/**
 	 * Create a new MeekSet.
 	 *
 	 * @param iterable Initial values.
 	 */
 	constructor(iterable?: Iterable<T> | null) {
-		this.#vwv = new WeakMap();
-		this.#wv = new Set();
-		this.#fr = new FinalizationRegistry(this.#wv.delete.bind(this.#wv));
+		const vwv = new WeakMap<T, WeakRef<T>>();
+		const wv = new Set<WeakRef<T>>();
+		const fr = new FinalizationRegistry(wv.delete.bind(wv));
 		for (const value of iterable ?? []) {
-			if (!this.#vwv.has(value)) {
+			if (!vwv.has(value)) {
 				const ref = new WeakRef(value);
-				this.#fr.register(value, ref, value);
-				this.#vwv.set(value, ref);
-				this.#wv.add(ref);
+				fr.register(value, ref, value);
+				vwv.set(value, ref);
+				wv.add(ref);
 			}
 		}
+		(pri ??= new WeakMap()).set(this, { fr, vwv, wv });
 	}
 
 	/**
@@ -48,7 +56,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * @returns Set iterator.
 	 */
 	public *[Symbol.iterator](): Generator<T, undefined, unknown> {
-		for (const ref of this.#wv) {
+		for (const ref of (pri.get(this) as Pri<T>).wv) {
 			const value = ref.deref();
 			if (value) {
 				yield value;
@@ -68,12 +76,13 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * @returns This set.
 	 */
 	public add(value: T): this {
-		let ref = this.#vwv.get(value);
+		const { fr, vwv, wv } = pri.get(this) as Pri<T>;
+		let ref = vwv.get(value);
 		if (!ref) {
 			ref = new WeakRef(value);
-			this.#fr.register(value, ref, value);
-			this.#vwv.set(value, ref);
-			this.#wv.add(ref);
+			fr.register(value, ref, value);
+			vwv.set(value, ref);
+			wv.add(ref);
 		}
 		return this;
 	}
@@ -82,9 +91,10 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * Clear this set.
 	 */
 	public clear(): void {
+		const p = pri.get(this) as Pri<T>;
 		const map = new WeakMap();
-		this.#wv.clear();
-		this.#vwv = map;
+		p.wv.clear();
+		p.vwv = map;
 	}
 
 	/**
@@ -94,11 +104,12 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * @returns Whether the value was deleted.
 	 */
 	public delete(value: T): boolean {
-		const ref = this.#vwv.get(value);
+		const { fr, vwv, wv } = pri.get(this) as Pri<T>;
+		const ref = vwv.get(value);
 		if (ref) {
-			this.#fr.unregister(value);
-			this.#vwv.delete(value);
-			return this.#wv.delete(ref);
+			fr.unregister(value);
+			vwv.delete(value);
+			return wv.delete(ref);
 		}
 		return false;
 	}
@@ -111,7 +122,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 */
 	public difference<U>(other: ReadonlySetLike<U>): MeekSet<T> {
 		const set = new MeekSet<T>();
-		for (const ref of this.#wv) {
+		for (const ref of (pri.get(this) as Pri<T>).wv) {
 			const value = ref.deref();
 			if (value && !other.has(value as unknown as U)) {
 				set.add(value);
@@ -126,7 +137,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * @returns Key-value iterator.
 	 */
 	public *entries(): Generator<[T, T], undefined, unknown> {
-		for (const ref of this.#wv) {
+		for (const ref of (pri.get(this) as Pri<T>).wv) {
 			const value = ref.deref();
 			if (value) {
 				yield [value, value];
@@ -144,7 +155,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 		callbackfn: (value: T, value2: T, set: MeekSet<T>) => void,
 		thisArg?: any,
 	): void {
-		for (const ref of this.#wv) {
+		for (const ref of (pri.get(this) as Pri<T>).wv) {
 			const value = ref.deref();
 			if (value) {
 				callbackfn.call(thisArg, value, value, this);
@@ -159,7 +170,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * @returns Whether the value is in this set.
 	 */
 	public has(value: T): boolean {
-		return this.#vwv.has(value);
+		return (pri.get(this) as Pri<T>).vwv.has(value);
 	}
 
 	/**
@@ -172,7 +183,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 		other: ReadonlySetLike<U>,
 	): MeekSet<T & U> {
 		const set = new MeekSet<T & U>();
-		for (const ref of this.#wv) {
+		for (const ref of (pri.get(this) as Pri<T>).wv) {
 			const value = ref.deref() as T & U;
 			if (value) {
 				if (other.has(value)) {
@@ -190,7 +201,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * @returns Whether every value in this set is not in other set.
 	 */
 	public isDisjointFrom(other: ReadonlySetLike<unknown>): boolean {
-		for (const ref of this.#wv) {
+		for (const ref of (pri.get(this) as Pri<T>).wv) {
 			const value = ref.deref();
 			if (value && other.has(value)) {
 				return false;
@@ -206,7 +217,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * @returns Whether every value in this set is in other set.
 	 */
 	public isSubsetOf(other: ReadonlySetLike<unknown>): boolean {
-		for (const ref of this.#wv) {
+		for (const ref of (pri.get(this) as Pri<T>).wv) {
 			const value = ref.deref();
 			if (value && !other.has(value)) {
 				return false;
@@ -222,10 +233,11 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * @returns Whether every value in other set is in this set.
 	 */
 	public isSupersetOf(other: ReadonlySetLike<unknown>): boolean {
+		const p = pri.get(this) as Pri<T>;
 		const itter = other.keys();
 		for (let result = itter.next(); !result.done; result = itter.next()) {
 			const { value } = result as { value: T };
-			if (!this.#vwv.has(value)) {
+			if (!p.vwv.has(value)) {
 				return false;
 			}
 		}
@@ -238,7 +250,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * @returns Key iterator.
 	 */
 	public *keys(): Generator<T, undefined, unknown> {
-		for (const ref of this.#wv) {
+		for (const ref of (pri.get(this) as Pri<T>).wv) {
 			const value = ref.deref();
 			if (value) {
 				yield value;
@@ -251,7 +263,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * Can be higher than the number of active values.
 	 */
 	public get size(): number {
-		return this.#wv.size;
+		return (pri.get(this) as Pri<T>).wv.size;
 	}
 
 	/**
@@ -263,8 +275,9 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	public symmetricDifference<U extends WeakKey>(
 		other: ReadonlySetLike<U>,
 	): MeekSet<T | U> {
+		const p = pri.get(this) as Pri<T>;
 		const set = new MeekSet<T | U>();
-		for (const ref of this.#wv) {
+		for (const ref of p.wv) {
 			const value = ref.deref();
 			if (value && !other.has(value as unknown as U)) {
 				set.add(value);
@@ -273,7 +286,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 		const itter = other.keys();
 		for (let result = itter.next(); !result.done; result = itter.next()) {
 			const { value } = result as { value: T & U };
-			if (!this.#vwv.has(value)) {
+			if (!p.vwv.has(value)) {
 				set.add(value);
 			}
 		}
@@ -288,7 +301,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 */
 	public union<U extends WeakKey>(other: ReadonlySetLike<U>): MeekSet<T | U> {
 		const set = new MeekSet<T | U>();
-		for (const ref of this.#wv) {
+		for (const ref of (pri.get(this) as Pri<T>).wv) {
 			const value = ref.deref();
 			if (value) {
 				set.add(value);
@@ -307,7 +320,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 * @returns Value iterator.
 	 */
 	public *values(): Generator<T, undefined, unknown> {
-		for (const ref of this.#wv) {
+		for (const ref of (pri.get(this) as Pri<T>).wv) {
 			const value = ref.deref();
 			if (value) {
 				yield value;
