@@ -4,7 +4,6 @@ import {
 	assertLess,
 	assertStrictEquals,
 } from '@std/assert';
-
 import { MeekMap } from './map.ts';
 
 Deno.test('MeekMap: constructor', () => {

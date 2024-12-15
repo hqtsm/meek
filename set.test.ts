@@ -4,7 +4,6 @@ import {
 	assertLess,
 	assertStrictEquals,
 } from '@std/assert';
-
 import { MeekSet } from './set.ts';
 
 Deno.test('MeekSet: constructor', () => {
