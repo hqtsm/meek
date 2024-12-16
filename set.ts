@@ -67,7 +67,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	/**
 	 * Type string.
 	 */
-	public readonly [Symbol.toStringTag] = 'MeekSet';
+	public readonly [Symbol.toStringTag]: string = 'MeekSet';
 
 	/**
 	 * Add a value to this set.

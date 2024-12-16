@@ -62,7 +62,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	/**
 	 * Type string.
 	 */
-	public readonly [Symbol.toStringTag] = 'MeekValueMap';
+	public readonly [Symbol.toStringTag]: string = 'MeekValueMap';
 
 	/**
 	 * Clear this map.
