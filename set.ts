@@ -260,7 +260,8 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 
 	/**
 	 * The number of values in this set.
-	 * Can be higher than the number of active values.
+	 *
+	 * @returns Number of values, can be greater than number of active values.
 	 */
 	public get size(): number {
 		return (pri.get(this) as Pri<T>).wv.size;
