@@ -26,6 +26,13 @@ let pri: WeakMap<MeekValueMap, Pri>;
  */
 export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	/**
+	 * Type string.
+	 */
+	public get [Symbol.toStringTag](): string {
+		return 'MeekValueMap';
+	}
+
+	/**
 	 * Create a new MeekValueMap.
 	 *
 	 * @param iterable Initial pairs.
@@ -58,11 +65,6 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 			}
 		}
 	}
-
-	/**
-	 * Type string.
-	 */
-	public readonly [Symbol.toStringTag]: string = 'MeekValueMap';
 
 	/**
 	 * Clear this map.

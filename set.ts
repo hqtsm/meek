@@ -31,6 +31,13 @@ let pri: WeakMap<MeekSet, Pri>;
  */
 export class MeekSet<T extends WeakKey = WeakKey> {
 	/**
+	 * Type string.
+	 */
+	public get [Symbol.toStringTag](): string {
+		return 'MeekSet';
+	}
+
+	/**
 	 * Create a new MeekSet.
 	 *
 	 * @param iterable Initial values.
@@ -63,11 +70,6 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 			}
 		}
 	}
-
-	/**
-	 * Type string.
-	 */
-	public readonly [Symbol.toStringTag]: string = 'MeekSet';
 
 	/**
 	 * Add a value to this set.
