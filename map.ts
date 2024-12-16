@@ -206,8 +206,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 
 	/**
 	 * The number of keys in this map.
-	 *
-	 * @returns Number of keys, can be greater than number of active keys.
+	 * Can be greater than number of active keys.
 	 */
 	public get size(): number {
 		return (pri.get(this) as Pri<K, V>).wk.size;
