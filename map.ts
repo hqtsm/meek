@@ -38,9 +38,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	/**
 	 * Type string.
 	 */
-	public get [Symbol.toStringTag](): string {
-		return 'MeekMap';
-	}
+	declare public [Symbol.toStringTag]: string;
 
 	/**
 	 * Create a new MeekMap.
@@ -227,6 +225,13 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 				yield p.kv.get(key) as V;
 			}
 		}
+	}
+
+	static {
+		Object.defineProperty(this.prototype, Symbol.toStringTag, {
+			value: 'MeekMap',
+			configurable: true,
+		});
 	}
 }
 

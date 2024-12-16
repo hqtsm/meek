@@ -33,9 +33,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	/**
 	 * Type string.
 	 */
-	public get [Symbol.toStringTag](): string {
-		return 'MeekSet';
-	}
+	declare public readonly [Symbol.toStringTag]: string;
 
 	/**
 	 * Create a new MeekSet.
@@ -328,6 +326,13 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 				yield value;
 			}
 		}
+	}
+
+	static {
+		Object.defineProperty(this.prototype, Symbol.toStringTag, {
+			value: 'MeekSet',
+			configurable: true,
+		});
 	}
 }
 

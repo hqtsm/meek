@@ -28,9 +28,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	/**
 	 * Type string.
 	 */
-	public get [Symbol.toStringTag](): string {
-		return 'MeekValueMap';
-	}
+	declare public readonly [Symbol.toStringTag]: string;
 
 	/**
 	 * Create a new MeekValueMap.
@@ -197,6 +195,13 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 				yield value;
 			}
 		}
+	}
+
+	static {
+		Object.defineProperty(this.prototype, Symbol.toStringTag, {
+			value: 'MeekValueMap',
+			configurable: true,
+		});
 	}
 }
 
