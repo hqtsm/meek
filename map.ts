@@ -38,7 +38,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	/**
 	 * Type string.
 	 */
-	declare public [Symbol.toStringTag]: string;
+	declare public readonly [Symbol.toStringTag]: string;
 
 	/**
 	 * Create a new MeekMap.
