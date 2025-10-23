@@ -16,9 +16,11 @@ Weak data collections without the limitations
 # Features
 
 - Pure TypeScript, run anywhere
+- Zero dependencies
+- Tree shaking friendly design
 - Enumerable WeakSet: MeekSet
 - Enumerable WeakMap: MeekMap
-- WeakValueMap: MeekValueMap
+- Enumerable WeakValueMap: MeekValueMap
 - Designed to be as compatible with the native collection types as possible
 - Do almost anything you can with regular collections with weak collections
 
