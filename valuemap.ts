@@ -6,6 +6,9 @@
 
 /**
  * Private data.
+ *
+ * @template K Key type.
+ * @template V Value type.
  */
 interface Pri<K = any, V extends WeakKey = WeakKey> {
 	/**
@@ -23,6 +26,9 @@ let pri: WeakMap<MeekValueMap, Pri>;
 
 /**
  * Like WeakValueMap.
+ *
+ * @template K Key type.
+ * @template V Value type.
  */
 export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	/**
@@ -207,6 +213,9 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 
 /**
  * Readonly MeekValueMap.
+ *
+ * @template K Key type.
+ * @template V Value type.
  */
 export type ReadonlyMeekValueMap<K = any, V extends WeakKey = WeakKey> = Omit<
 	MeekValueMap<K, V>,

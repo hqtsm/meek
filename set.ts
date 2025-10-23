@@ -6,6 +6,8 @@
 
 /**
  * Private data.
+ *
+ * @template T Value type.
  */
 interface Pri<T extends WeakKey = WeakKey> {
 	/**
@@ -28,6 +30,8 @@ let pri: WeakMap<MeekSet, Pri>;
 
 /**
  * Like WeakSet.
+ *
+ * @template T Value type.
  */
 export class MeekSet<T extends WeakKey = WeakKey> {
 	/**
@@ -338,6 +342,8 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 
 /**
  * Readonly MeekSet.
+ *
+ * @template T Value type.
  */
 export type ReadonlyMeekSet<T extends WeakKey> = Omit<
 	MeekSet<T>,
