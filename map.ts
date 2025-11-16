@@ -32,7 +32,7 @@ interface Pri<K extends WeakKey = WeakKey, V = any> {
 	kv: WeakMap<K, V>;
 }
 
-let pri: WeakMap<MeekMap, Pri>;
+const pri = new WeakMap<MeekMap, Pri>();
 
 /**
  * Like WeakMap.
@@ -66,7 +66,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 			}
 			kv.set(key, value);
 		}
-		(pri ??= new WeakMap()).set(this, { fr, kwk, wk, kv });
+		pri.set(this, { fr, kwk, wk, kv });
 	}
 
 	/**

@@ -26,7 +26,7 @@ interface Pri<T extends WeakKey = WeakKey> {
 	readonly wv: Set<WeakRef<T>>;
 }
 
-let pri: WeakMap<MeekSet, Pri>;
+const pri = new WeakMap<MeekSet, Pri>();
 
 /**
  * Like WeakSet.
@@ -56,7 +56,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 				wv.add(ref);
 			}
 		}
-		(pri ??= new WeakMap()).set(this, { fr, vwv, wv });
+		pri.set(this, { fr, vwv, wv });
 	}
 
 	/**
