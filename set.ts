@@ -336,6 +336,8 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 		Object.defineProperty(this.prototype, Symbol.toStringTag, {
 			value: 'MeekSet',
 			configurable: true,
+			enumerable: false,
+			writable: false,
 		});
 	}
 }

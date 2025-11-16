@@ -152,6 +152,18 @@ Deno.test('MeekSet: values', () => {
 Deno.test('MeekSet: Symbol.toStringTag', () => {
 	const set = new MeekSet();
 	assertStrictEquals(String(set), `[object ${MeekSet.name}]`);
+	assertEquals(
+		Object.getOwnPropertyDescriptor(
+			MeekSet.prototype,
+			Symbol.toStringTag,
+		),
+		{
+			value: MeekSet.name,
+			configurable: true,
+			enumerable: false,
+			writable: false,
+		},
+	);
 });
 
 Deno.test('MeekSet: difference', () => {

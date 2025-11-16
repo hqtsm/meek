@@ -192,6 +192,18 @@ Deno.test('MeekMap: values', () => {
 Deno.test('MeekMap: Symbol.toStringTag', () => {
 	const set = new MeekMap();
 	assertStrictEquals(String(set), `[object ${MeekMap.name}]`);
+	assertEquals(
+		Object.getOwnPropertyDescriptor(
+			MeekMap.prototype,
+			Symbol.toStringTag,
+		),
+		{
+			value: MeekMap.name,
+			configurable: true,
+			enumerable: false,
+			writable: false,
+		},
+	);
 });
 
 Deno.test('MeekMap: GC', async () => {

@@ -207,6 +207,8 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 		Object.defineProperty(this.prototype, Symbol.toStringTag, {
 			value: 'MeekValueMap',
 			configurable: true,
+			enumerable: false,
+			writable: false,
 		});
 	}
 }
