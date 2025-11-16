@@ -61,7 +61,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 *
 	 * @returns Key-value iterator.
 	 */
-	public *[Symbol.iterator](): Generator<[K, V], undefined, unknown> {
+	public *[Symbol.iterator](): MapIterator<[K, V]> {
 		for (const [key, ref] of (pri.get(this) as Pri<K, V>).kwv) {
 			const value = ref.deref();
 			if (value) {
@@ -102,7 +102,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 *
 	 * @returns Key-value iterator.
 	 */
-	public *entries(): Generator<[K, V], undefined, unknown> {
+	public *entries(): MapIterator<[K, V]> {
 		for (const [key, ref] of (pri.get(this) as Pri<K, V>).kwv) {
 			const value = ref.deref();
 			if (value) {
@@ -154,7 +154,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 *
 	 * @returns Key iterator.
 	 */
-	public *keys(): Generator<K, undefined, unknown> {
+	public *keys(): MapIterator<K> {
 		for (const [key, ref] of (pri.get(this) as Pri<K, V>).kwv) {
 			if (ref.deref()) {
 				yield key;
@@ -194,7 +194,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	 *
 	 * @returns Value iterator.
 	 */
-	public *values(): Generator<V, undefined, unknown> {
+	public *values(): MapIterator<V> {
 		for (const [, ref] of (pri.get(this) as Pri<K, V>).kwv) {
 			const value = ref.deref();
 			if (value) {
