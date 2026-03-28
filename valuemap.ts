@@ -24,6 +24,11 @@ interface Pri<K = any, V extends WeakKey = WeakKey> {
 
 const pri = new WeakMap<MeekValueMap, Pri>();
 
+const unregister = (
+	fr: FinalizationRegistry<unknown>,
+	wr?: WeakRef<any>,
+): unknown => wr && fr.unregister(wr);
+
 /**
  * Like WeakValueMap.
  *
@@ -45,11 +50,8 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 		const kwv = new Map<K, WeakRef<V>>();
 		const fr = new FinalizationRegistry(kwv.delete.bind(kwv));
 		for (const [key, value] of iterable ?? []) {
-			let ref = kwv.get(key);
-			if (ref) {
-				fr.unregister(ref);
-			}
-			ref = new WeakRef(value);
+			unregister(fr, kwv.get(key));
+			const ref = new WeakRef(value);
 			fr.register(value, key, ref);
 			kwv.set(key, ref);
 		}
@@ -140,6 +142,53 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	}
 
 	/**
+	 * Get the value for a key from this map or insert the default value.
+	 *
+	 * @param key Key to get.
+	 * @param defaultValue Default value.
+	 * @returns Value for the key.
+	 */
+	public getOrInsert(key: K, defaultValue: V): V {
+		const { fr, kwv } = pri.get(this) as Pri<K, V>;
+		const old = kwv.get(key);
+		if (old) {
+			const r = old.deref();
+			if (r) {
+				return r;
+			}
+		}
+		const ref = new WeakRef(defaultValue);
+		unregister(fr, old);
+		fr.register(defaultValue, key, ref);
+		kwv.set(key, ref);
+		return defaultValue;
+	}
+
+	/**
+	 * Get the value for a key from this map or insert the default value.
+	 *
+	 * @param key Key to get.
+	 * @param callback Compute the default value.
+	 * @returns Value for the key.
+	 */
+	public getOrInsertComputed(key: K, callback: (key: K) => V): V {
+		const { fr, kwv } = pri.get(this) as Pri<K, V>;
+		const old = kwv.get(key);
+		if (old) {
+			const r = old.deref();
+			if (r) {
+				return r;
+			}
+		}
+		const value = callback(key);
+		const ref = new WeakRef(value);
+		unregister(fr, old);
+		fr.register(value, key, ref);
+		kwv.set(key, ref);
+		return value;
+	}
+
+	/**
 	 * Has a key in this map.
 	 *
 	 * @param key Key to check.
@@ -172,10 +221,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	public set(key: K, value: V): this {
 		const { fr, kwv } = pri.get(this) as Pri<K, V>;
 		const ref = new WeakRef(value);
-		const old = kwv.get(key);
-		if (old) {
-			fr.unregister(old);
-		}
+		unregister(fr, kwv.get(key));
 		fr.register(value, key, ref);
 		kwv.set(key, ref);
 		return this;

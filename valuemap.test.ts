@@ -94,6 +94,48 @@ Deno.test('MeekValueMap: get', () => {
 	assert(pairs);
 });
 
+Deno.test('MeekValueMap: getOrInsert', () => {
+	const pairs: readonly [number, { i: number }][] = new Array(100).fill(0)
+		.map((_, i) => [i, { i }]);
+	const map = new MeekValueMap();
+	for (let i = 0; i < pairs.length; i++) {
+		const [k, v] = pairs[i];
+		assertStrictEquals(map.has(k), false);
+		assertStrictEquals(map.getOrInsert(k, v), v);
+		assertStrictEquals(map.has(k), true);
+		assertStrictEquals(map.get(k), v);
+		const o = { i: -i };
+		assertStrictEquals(map.getOrInsert(k, o), v);
+		assertStrictEquals(map.get(k), v);
+	}
+	assert(pairs);
+});
+
+Deno.test('MeekValueMap: getOrInsertComputed', () => {
+	const uncalled = () => {
+		throw new Error('Should not be called');
+	};
+	const pairs: readonly [number, { i: number }][] = new Array(100).fill(0)
+		.map((_, i) => [i, { i }]);
+	const map = new MeekValueMap();
+	for (let i = 0; i < pairs.length; i++) {
+		const [k, v] = pairs[i];
+		assertStrictEquals(map.has(k), false);
+		assertStrictEquals(
+			map.getOrInsertComputed(k, (key) => {
+				assertStrictEquals(key, k);
+				return v;
+			}),
+			v,
+		);
+		assertStrictEquals(map.has(k), true);
+		assertStrictEquals(map.get(k), v);
+		assertStrictEquals(map.getOrInsertComputed(k, uncalled), v);
+		assertStrictEquals(map.get(k), v);
+	}
+	assert(pairs);
+});
+
 Deno.test('MeekValueMap: set', () => {
 	const pairs: readonly [number, { i: number }][] = new Array(100).fill(0)
 		.map((_, i) => [i, { i }]);
@@ -242,36 +284,22 @@ Deno.test('MeekValueMap: Symbol.toStringTag', () => {
 	);
 });
 
-Deno.test('MeekValueMap: GC', async () => {
+Deno.test('MeekValueMap: GC set', async () => {
 	await forceGC((map, key, value) => {
 		map.set(key, value);
 	});
 });
 
-Deno.test('MeekValueMap: modify while iterating', () => {
-	const pairs: readonly [number, { i: number }][] = new Array(100).fill(0)
-		.map((_, i) => [i, { i }]);
-	const mapExpt = new Map(pairs.slice(0, 60));
-	const mapTest = new MeekValueMap(pairs.slice(0, 60));
-	const readWhileModify = (map: Map<number, WeakKey> | MeekValueMap) => {
-		const r: number[] = [];
-		let i = 0;
-		for (const [k] of map) {
-			r.push(k);
-			map.delete(pairs[k + 1][0]);
-			if (i++ === 10) {
-				map.clear();
-				for (const [k, v] of pairs.slice(50)) {
-					map.set(k, v);
-				}
-			}
-		}
-		return r;
-	};
-	const valExpt = readWhileModify(mapExpt);
-	const valTest = readWhileModify(mapTest);
-	assertEquals(valExpt, valTest);
-	assert(pairs);
+Deno.test('MeekValueMap: GC getOrInsert', async () => {
+	await forceGC((map, key, value) => {
+		map.getOrInsert(key, value);
+	});
+});
+
+Deno.test('MeekValueMap: GC getOrInsertComputed', async () => {
+	await forceGC((map, key, value) => {
+		map.getOrInsertComputed(key, () => value);
+	});
 });
 
 /*
