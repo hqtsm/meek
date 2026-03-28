@@ -182,7 +182,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * Get the value for a key from this map or insert computed default value.
 	 *
 	 * @param key Key to get.
-	 * @param defaultValue Default value.
+	 * @param callback Compute the default value.
 	 * @returns Value for the key.
 	 */
 	public getOrInsertComputed(key: K, callback: (key: K) => V): V {
