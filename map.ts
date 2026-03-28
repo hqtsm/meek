@@ -285,5 +285,5 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
  */
 export type ReadonlyMeekMap<K extends WeakKey = WeakKey, V = any> = Omit<
 	MeekMap<K, V>,
-	'clear' | 'delete' | 'set'
+	'clear' | 'delete' | 'getOrInsert' | 'getOrInsertComputed' | 'set'
 >;
