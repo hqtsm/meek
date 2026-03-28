@@ -155,14 +155,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * @returns Value for the key.
 	 */
 	public get(key: K): V | undefined {
-		const { kv, kwk } = pri.get(this) as Pri<K, V>;
-		const ref = kwk.get(key);
-		if (ref) {
-			const key = ref.deref();
-			if (key) {
-				return kv.get(key);
-			}
-		}
+		return (pri.get(this) as Pri<K, V>).kv.get(key);
 	}
 
 	/**
@@ -172,7 +165,7 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 * @returns Whether the key is in this map.
 	 */
 	public has(key: K): boolean {
-		return !!(pri.get(this) as Pri<K, V>).kwk.get(key)?.deref();
+		return (pri.get(this) as Pri<K, V>).kv.has(key);
 	}
 
 	/**
