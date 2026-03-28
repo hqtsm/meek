@@ -6,6 +6,36 @@ import {
 } from '@std/assert';
 import { MeekMap } from './map.ts';
 
+async function forceGC(
+	each: (map: MeekMap, value: object) => void,
+): Promise<void> {
+	let total = 0;
+	const pairs = new Map();
+	const map = new MeekMap();
+	for (let i = 0; i < 10; i++) {
+		const o = { i, data: new Uint8Array(1000) };
+		pairs.set(o, i + 1);
+		map.set(o, i + 1);
+		total++;
+	}
+	while (map.size >= (total / 2)) {
+		for (let i = 0; i < 100; i++) {
+			each(map, { i: total++, data: new Uint8Array(10000) });
+		}
+		// deno-lint-ignore no-await-in-loop
+		await new Promise((r) => setTimeout(r, 0));
+	}
+	for (const [k, v] of pairs) {
+		assertStrictEquals(map.has(k), true);
+		assertStrictEquals(map.get(k), v);
+	}
+	assertLess(map.size, total);
+	map.forEach((value, key) => {
+		assertStrictEquals(value, pairs.has(key) ? pairs.get(key) : -1);
+	});
+	assert(pairs);
+}
+
 Deno.test('MeekMap: constructor', () => {
 	{
 		const map = new MeekMap();
@@ -257,32 +287,23 @@ Deno.test('MeekMap: Symbol.toStringTag', () => {
 	);
 });
 
-Deno.test('MeekMap: GC', async () => {
-	let total = 0;
-	const pairs = new Map();
-	const map = new MeekMap();
-	for (let i = 0; i < 10; i++) {
-		const o = { i, data: new Uint8Array(1000) };
-		pairs.set(o, i + 1);
-		map.set(o, i + 1);
-		total++;
-	}
-	while (map.size >= (total / 2)) {
-		for (let i = 0; i < 100; i++) {
-			map.set({ i: total++, data: new Uint8Array(10000) }, -1);
-		}
-		// deno-lint-ignore no-await-in-loop
-		await new Promise((r) => setTimeout(r, 0));
-	}
-	for (const [k, v] of pairs) {
-		assertStrictEquals(map.has(k), true);
-		assertStrictEquals(map.get(k), v);
-	}
-	assertLess(map.size, total);
-	map.forEach((value, key) => {
-		assertStrictEquals(value, pairs.has(key) ? pairs.get(key) : -1);
+Deno.test('MeekMap: GC set', async () => {
+	await forceGC((map, value) => {
+		map.set(value, -1);
 	});
-	assert(pairs);
+});
+
+Deno.test('MeekMap: GC getOrInsert', async () => {
+	await forceGC((map, value) => {
+		map.getOrInsert(value, -1);
+	});
+});
+
+Deno.test('MeekMap: GC getOrInsertComputed', async () => {
+	const compute = () => -1;
+	await forceGC((map, value) => {
+		map.getOrInsertComputed(value, compute);
+	});
 });
 
 Deno.test('MeekMap: modify while iterating', () => {
