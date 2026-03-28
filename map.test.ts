@@ -59,6 +59,57 @@ Deno.test('MeekMap: get', () => {
 	assert(pairs);
 });
 
+Deno.test('MeekMap: getOrInsert', () => {
+	const pairs: readonly [{ i: number }, number][] = new Array(100).fill(0)
+		.map((_, i) => [{ i }, i]);
+	const map = new MeekMap();
+	for (let i = 0; i < pairs.length; i++) {
+		const [k, v] = pairs[i];
+		assertStrictEquals(map.has(k), false);
+		assertStrictEquals(map.getOrInsert(k, v), v);
+		assertStrictEquals(map.has(k), true);
+		assertStrictEquals(map.get(k), v);
+		assertStrictEquals(map.getOrInsert(k, -1), v);
+	}
+	{
+		const und = {};
+		map.getOrInsert(und, undefined);
+		assertStrictEquals(map.has(und), true);
+		assertStrictEquals(map.get(und), undefined);
+	}
+	assert(pairs);
+});
+
+Deno.test('MeekMap: getOrInsertComputed', () => {
+	const uncalled = () => {
+		throw new Error('Should not be called');
+	};
+	const pairs: readonly [{ i: number }, number][] = new Array(100).fill(0)
+		.map((_, i) => [{ i }, i]);
+	const map = new MeekMap();
+	for (let i = 0; i < pairs.length; i++) {
+		const [k, v] = pairs[i];
+		assertStrictEquals(map.has(k), false);
+		assertStrictEquals(
+			map.getOrInsertComputed(k, (key) => {
+				assertStrictEquals(key, k);
+				return v;
+			}),
+			v,
+		);
+		assertStrictEquals(map.has(k), true);
+		assertStrictEquals(map.get(k), v);
+		assertStrictEquals(map.getOrInsertComputed(k, uncalled), v);
+	}
+	{
+		const und = {};
+		map.getOrInsertComputed(und, () => undefined);
+		assertStrictEquals(map.has(und), true);
+		assertStrictEquals(map.get(und), undefined);
+	}
+	assert(pairs);
+});
+
 Deno.test('MeekMap: set', () => {
 	const pairs: readonly [{ i: number }, number][] = new Array(100).fill(0)
 		.map((_, i) => [{ i }, i]);
@@ -260,7 +311,6 @@ Deno.test('MeekMap: modify while iterating', () => {
 	assert(pairs);
 });
 
-/*
 Deno.test('MeekMap: implements map', () => {
 	// Really just type checked.
 	const map: Map<[number], number> = new MeekMap([[[1], 123]]);
@@ -268,4 +318,3 @@ Deno.test('MeekMap: implements map', () => {
 	const weakMap: WeakMap<[number], number> = new MeekMap([[[1], 123]]);
 	assert(weakMap);
 });
-*/

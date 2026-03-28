@@ -159,6 +159,47 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	}
 
 	/**
+	 * Get the value for a key from this map or insert the default value.
+	 *
+	 * @param key Key to get.
+	 * @param defaultValue Default value.
+	 * @returns Value for the key.
+	 */
+	public getOrInsert(key: K, defaultValue: V): V {
+		const { fr, kv, kwk, wk } = pri.get(this) as Pri<K, V>;
+		if (kv.has(key)) {
+			return kv.get(key)!;
+		}
+		const ref = new WeakRef(key);
+		fr.register(key, ref, key);
+		kwk.set(key, ref);
+		wk.add(ref);
+		kv.set(key, defaultValue);
+		return defaultValue;
+	}
+
+	/**
+	 * Get the value for a key from this map or insert computed default value.
+	 *
+	 * @param key Key to get.
+	 * @param defaultValue Default value.
+	 * @returns Value for the key.
+	 */
+	public getOrInsertComputed(key: K, callback: (key: K) => V): V {
+		const { fr, kv, kwk, wk } = pri.get(this) as Pri<K, V>;
+		if (kv.has(key)) {
+			return kv.get(key)!;
+		}
+		const value = callback(key);
+		const ref = new WeakRef(key);
+		fr.register(key, ref, key);
+		kwk.set(key, ref);
+		wk.add(ref);
+		kv.set(key, value);
+		return value;
+	}
+
+	/**
 	 * Has a key in this map.
 	 *
 	 * @param key Key to check.
