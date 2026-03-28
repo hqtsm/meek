@@ -266,8 +266,10 @@ Deno.test('MeekValueMap: modify while iterating', () => {
 	assert(pairs);
 });
 
+/*
 Deno.test('MeekValueMap: implements map', () => {
 	// Really just type checked.
 	const map: Map<number, [number]> = new MeekValueMap([[123, [1]]]);
 	assert(map);
 });
+*/

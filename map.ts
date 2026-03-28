@@ -89,8 +89,8 @@ export class MeekMap<K extends WeakKey = WeakKey, V = any> {
 	 */
 	public clear(): void {
 		const p = pri.get(this) as Pri<K, V>;
-		const map = new WeakMap();
-		const values = new WeakMap();
+		const map = new WeakMap<K, WeakRef<K>>();
+		const values = new WeakMap<K, V>();
 		p.wk.clear();
 		p.kwk = map;
 		p.kv = values;

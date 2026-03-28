@@ -96,7 +96,7 @@ export class MeekSet<T extends WeakKey = WeakKey> {
 	 */
 	public clear(): void {
 		const p = pri.get(this) as Pri<T>;
-		const map = new WeakMap();
+		const map = new WeakMap<T, WeakRef<T>>();
 		p.wv.clear();
 		p.vwv = map;
 	}
