@@ -165,7 +165,7 @@ export class MeekValueMap<K = any, V extends WeakKey = WeakKey> {
 	}
 
 	/**
-	 * Get the value for a key from this map or insert the default value.
+	 * Get the value for a key from this map or insert computed default value.
 	 *
 	 * @param key Key to get.
 	 * @param callback Compute the default value.
